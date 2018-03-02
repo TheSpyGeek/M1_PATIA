@@ -8,7 +8,7 @@
 		(paletInCamp ?p)
 		(nodeInCamp ?n)
 		(robotFree)
-		)
+	)
 
 	(:action moveRobot
 		:parameters (?n ?m - node)
