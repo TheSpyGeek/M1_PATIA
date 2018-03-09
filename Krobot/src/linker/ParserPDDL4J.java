@@ -1,6 +1,6 @@
 package linker;
 
-import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 
 import fr.uga.pddl4j.encoding.CodedProblem;
@@ -15,32 +15,43 @@ public class ParserPDDL4J {
 	String problem;
 	
 	public ParserPDDL4J() {
-		try {
-			parser.parseDomain(domainString);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		parser.parseStringDomain(domainString);
+	}
+	
+	public static void main(String[] args) {
+		ParserPDDL4J parser = new ParserPDDL4J();
+		List<String> nodesWithPalet = Arrays.asList("D", "E", "F", "G", "H", "I", "J", "K", "L");
+		parser.parse(nodesWithPalet, "K", true);
+		parser.runProblem();
 	}
 	
 	public void parse(List<String> nodesWithPalet, String nodeRobot, boolean robotFree){
-		try {
-			problem = problemDefine;
-			problem += "	(:objects A B C D E F G H I J K L - node ";
-			for (int i=0; i<nodesWithPalet.size(); i++)
-				problem += i + " ";
-			problem += "- palet)\n";
-			problem += "	(:init\n";
-			if (robotFree) 
-				problem += "		(robotFree)\n";
-			for (int i=0; i<nodesWithPalet.size(); i++){
-				problem += "		(paletOnNode " + i + " " + nodesWithPalet.get(i) + ")\n";
-			}
-			problem += "		(robotOnNode " + nodeRobot + ")\n";
-			problem += problemInit;
-			parser.parse(problem);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		problem = problemDefine;
+		problem += "	(:objects A D E F G H I J K L - node";
+		for (int i=0; i<nodesWithPalet.size(); i++)
+			problem += " P" + i;
+		problem += " - palet)\n";
+		problem += "	(:init\n";
+		if (robotFree) 
+			problem += "		(robotFree)\n";
+		for (int i=0; i<nodesWithPalet.size(); i++){
+			problem += "		(paletOnNode P" + i + " " + nodesWithPalet.get(i) + ")\n";
 		}
+		problem += "		(robotOnNode " + nodeRobot + ")\n";
+		problem += problemInit;
+		if (nodesWithPalet.size() > 1){
+			problem += "		(and\n";
+			for(int i=0; i<nodesWithPalet.size(); i++){
+				problem += "			(paletInCamp P" + i + ")\n";
+			}
+			problem += "		)\n";
+		} else {
+			problem += "		(paletInCamp 0)\n";
+		}
+		problem += 	"	)\n" + 
+					")";
+		System.out.println(problem);
+		parser.parseStringProblem(problem);
 	}
 	
 	public void runProblem(){
@@ -61,49 +72,31 @@ public class ParserPDDL4J {
         	for(BitOp action : plan.actions()){
         		System.out.println(action.getName());
         	}
-            cp.toString(plan);
+        	System.out.println("PLAN TROUVE !!!!!!!");
+            System.out.println(cp.toString(plan));
         }
 	}
 	
 	private static String problemDefine = "(define (problem ROBOTPARTY) (:domain KROBOT)\n";
-	private static String problemInit = "		(connected A B)\n" + 
-			"		(connected A D)\n" + 
-			"		(connected B A)\n" + 
-			"		(connected B C)\n" + 
-			"		(connected B E)\n" + 
-			"		(connected C B)\n" + 
-			"		(connected C F)\n" + 
-			"		(connected D A)\n" + 
+	private static String problemInit = "		(connected A D)\n" + 
+			"		(connected A E)\n" + 
+			"		(connected A F)\n" + 
 			"		(connected D E)\n" + 
 			"		(connected D G)\n" + 
-			"		(connected E B)\n" + 
-			"		(connected E D)\n" + 
 			"		(connected E F)\n" + 
 			"		(connected E H)\n" + 
-			"		(connected F C)\n" + 
-			"		(connected F E)\n" + 
 			"		(connected F I)\n" + 
-			"		(connected G D)\n" + 
 			"		(connected G H)\n" + 
 			"		(connected G J)\n" + 
-			"		(connected H E)\n" + 
-			"		(connected H G)\n" + 
 			"		(connected H I)\n" + 
 			"		(connected H K)\n" + 
-			"		(connected I F)\n" + 
-			"		(connected I H)\n" + 
-			"		(connected I L)\n" + 
-			"		(connected J G)\n" + 
-			"		(connected J K)\n" + 
-			"		(connected K H)\n" + 
-			"		(connected K J)\n" + 
-			"		(connected K L)\n" + 
-			"		(connected L I)\n" + 
-			"		(connected L K)\n" + 
+			"		(connected I L)\n" +
+			"		(connected J K)\n" +
+			"		(connected K L)\n" +
 			"		(nodeInCamp A)\n" + 
-			"		(nodeInCamp B)\n" + 
-			"		(nodeInCamp C)\n" + 
-			"	)";
+			"	)\n" +
+			"	(:goal\n";
+	
 	
     private static String domainString = "(define (domain KROBOT)\n" + 
     		"	(:requirements :strips :typing)\n" + 
@@ -118,7 +111,7 @@ public class ParserPDDL4J {
     		"		(robotFree)\n" + 
     		"	)\n" + 
     		"\n" + 
-    		"	(:action moveRobot\n" + 
+    		"	(:action moveRobot1\n" + 
     		"		:parameters (?n ?m - node)\n" + 
     		"		:precondition (and (robotFree) (robotOnNode ?n) (connected ?n ?m))\n" + 
     		"		:effect (and\n" + 
@@ -126,9 +119,27 @@ public class ParserPDDL4J {
     		"			(robotOnNode ?m)\n" + 
     		"		)\n" + 
     		"	)\n" + 
-    		"	(:action movePaletAndRobot\n" + 
+    		"	(:action movePaletAndRobot1\n" + 
     		"		:parameters (?n ?m - node ?p - palet)\n" + 
     		"		:precondition (and (robotOnNode ?n) (paletOnNode ?p ?n) (connected ?n ?m) (paletOnRobot ?p))\n" + 
+    		"		:effect (and\n" + 
+    		"			(not (robotOnNode ?n))\n" + 
+    		"			(robotOnNode ?m)\n" + 
+    		"			(not (paletOnNode ?p ?n))\n" + 
+    		"			(paletOnNode ?p ?m)\n" + 
+    		"		)\n" + 
+    		"	)\n" + 
+    		"	(:action moveRobot2\n" + 
+    		"		:parameters (?n ?m - node)\n" + 
+    		"		:precondition (and (robotFree) (robotOnNode ?n) (connected ?m ?n))\n" + 
+    		"		:effect (and\n" + 
+    		"			(not (robotOnNode ?n))\n" + 
+    		"			(robotOnNode ?m)\n" + 
+    		"		)\n" + 
+    		"	)\n" + 
+    		"	(:action movePaletAndRobot2\n" + 
+    		"		:parameters (?n ?m - node ?p - palet)\n" + 
+    		"		:precondition (and (robotOnNode ?n) (paletOnNode ?p ?n) (connected ?m ?n) (paletOnRobot ?p))\n" + 
     		"		:effect (and\n" + 
     		"			(not (robotOnNode ?n))\n" + 
     		"			(robotOnNode ?m)\n" + 
