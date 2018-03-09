@@ -300,6 +300,75 @@ public final class Parser {
             LOGGER.error(UNEXP_ERROR_MESSAGE, exception);
         }
     }
+    
+    /**
+     * Parses a planning domain from the string description.
+     *
+     * @param domainString  the string that contains the planning domains.
+     */
+    public void parseStringDomain(String domainString)  {
+
+        try {
+            // Create temp files for domain and problem
+            File domain = File.createTempFile("domain", ".pddl");
+
+            // Fill files with string content
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(domain))) {
+                writer.write(domainString);
+            }
+
+            // Parse and check the domain
+            this.lexer = new Lexer(new FileInputStream(domain));
+            lexer.setErrorManager(this.mgr);
+            lexer.setFile(domain);
+            this.lexer.domain();
+            this.domain = this.lexer.getDomain();
+            this.checkTypesDeclaration();
+            this.checkConstantsDeclaration();
+            this.checkPredicatesDeclaration();
+            this.checkFunctionsDeclaration();
+            this.checkDomainConstraints();
+            this.checkOperatorsDeclaration();
+            this.checkDerivedPredicatesDeclaration();
+        } catch (Exception exception) {
+            LOGGER.error(UNEXP_ERROR_MESSAGE, exception);
+        }
+    }
+    
+    /**
+     * Parses a planning problem from the string description.
+     *
+     * @param problemString the string that contains the planning problem.
+     */
+    public void parseStringProblem(String problemString)  {
+        try {
+            // Create temp files for problem
+            File problem = File.createTempFile("problem", ".pddl");
+
+            // Fill files with string content
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(problem))) {
+                writer.write(problemString);
+            }
+
+            // Parse and check the problem
+            if (this.lexer == null) {
+                this.lexer = new Lexer(new FileInputStream(problem));
+            } else {
+                this.lexer.ReInit(new FileInputStream(problem));
+            }
+            this.lexer.setFile(problem);
+            this.lexer.problem();
+            this.problem = this.lexer.getProblem();
+            this.checkDomainName();
+            this.checkObjectsDeclaration();
+            this.checkInitialFacts();
+            this.checkGoal();
+            this.checkProblemConstraints();
+            this.checkMetric();
+        } catch (Exception exception) {
+            LOGGER.error(UNEXP_ERROR_MESSAGE, exception);
+        }
+    }
 
     /**
      * Parses a planning domain and a planning problem from their respective string description.
@@ -308,11 +377,10 @@ public final class Parser {
      * @param problemString the string that contains the planning problem.
      */
     public void parseString(String domainString, String problemString)  {
-
         try {
             // Create temp files for domain and problem
             File domain = File.createTempFile("domain", ".pddl");
-            File problem = File.createTempFile("domain", ".pddl");
+            File problem = File.createTempFile("problem", ".pddl");
 
             // Fill files with string content
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(domain))) {
