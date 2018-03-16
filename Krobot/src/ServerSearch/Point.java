@@ -1,6 +1,6 @@
 package ServerSearch;
 
-public class Point {
+public class Point implements Comparable<Point> {
 	
 	private int x;
 	private int y;
@@ -16,6 +16,27 @@ public class Point {
 		p += ", "+ y;
 		p += "}";
 		return p;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	@Override
+	public int compareTo(Point p) {
+		return getX() < p.getX() ? -1 : (getY() < p.getY()) ? 1 : 0;
 	}
 
 }

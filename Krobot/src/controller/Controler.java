@@ -8,19 +8,25 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import motors.Graber;
-import motors.TImedMotor;
-import motors.Propulsion;
-import utils.R2D2Constants;
-import vue.InputHandler;
-import vue.Screen;
-
+import ServerSearch.Point;
+import ServerSearch.Server;
 import lejos.hardware.Button;
 import lejos.robotics.Color;
+import linker.ParserPDDL4J;
+import motors.Graber;
+import motors.Propulsion;
+import motors.TImedMotor;
 import sensors.ColorSensor;
 import sensors.PressionSensor;
 import sensors.VisionSensor;
+import utils.ArrayIndexComparator;
+import utils.R2D2Constants;
+import vue.InputHandler;
+import vue.Screen;
 
 public class Controler {
 
@@ -31,9 +37,13 @@ public class Controler {
 	protected VisionSensor   vision     = null;
 	protected Screen         screen     = null;
 	protected InputHandler   input      = null;
+	protected Server		 server		= null;
+	protected ParserPDDL4J	 parser		= null;
+	protected List<Point> nodesPosition = null;
+	protected Point		  robotPosition	= null;
+	protected double		 robotAngle	= 0.0;
 	
 	private ArrayList<TImedMotor> motors     = new ArrayList<TImedMotor>();
-
 
 	public Controler(){
 		propulsion = new Propulsion();
@@ -43,6 +53,9 @@ public class Controler {
 		vision     = new VisionSensor();
 		screen     = new Screen();
 		input      = new InputHandler(screen);
+		server	   = new Server();
+		parser	   = new ParserPDDL4J();
+		nodesPosition = new ArrayList<Point>();
 		motors.add(propulsion);
 		motors.add(graber);
 	}
@@ -68,13 +81,147 @@ public class Controler {
 			screen.drawText("Lancer", 
 				"Appuyez sur OK si la","ligne noire est à gauche",
 				"Appuyez sur tout autre", "elle est à droite");
-			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-				mainLoop(true);
-			}else{
-				mainLoop(false);
-			}
+			calibrateNodePosition();
+			//TODO calibrate robotAngle
+			runIA();
+//			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
+//				mainLoop(true);
+//			}else{
+//				mainLoop(false);
+//			}
 		}
 		cleanUp();
+	}
+
+	private void calibrateNodePosition() {
+		List<Point> tmp = server.run();
+		if (tmp.size() != 9){
+			System.out.println("Error bad number of palet on table");
+			return;
+		}
+		Collections.sort(tmp);
+		for(int i=0; i<3; i++){
+			Point a = tmp.get(i*3);
+			Point b = tmp.get(i*3+1);
+			Point c = tmp.get(i*3+2);
+			if (a.getY() < b.getY() && a.getY() < c.getY()){
+				this.nodesPosition.add(i*3, a);
+			} else if (a.getY() < b.getY() && c.getY() < a.getY()){
+				this.nodesPosition.add(i*3, a);
+			} else if (b.getY() < a.getY() && a.getY() < c.getY()){
+				this.nodesPosition.add(i*3, a);
+			} else if (b.getY() < a.getY() && a.getY() < c.getY()){
+				this.nodesPosition.add(i*3, a);
+			}
+		}
+	}
+	
+//	public static double angleBetweenPoints(Point a, Point b) {
+//        double angleA = angleFromOriginCounterClockwise(a);
+//        double angleB = angleFromOriginCounterClockwise(b);
+//        return Math.abs(angleA-angleB);
+//    }
+//
+//    public static double angleFromOriginCounterClockwise(Point a) {
+//        double degrees = Math.toDegrees(Math.atan(a.getY()/a.getX()));
+//        if(a.getX() < 0.0) return degrees+180.0;
+//        else if(a.getY() < 0.0) return degrees+360.0;
+//        else return degrees;
+//    }
+//
+//    public static void main(String[] args) {
+//        Point p1 = new Point(1, 100);
+//        Point p2 = new Point(-100, 1);
+//        System.out.println(angleBetweenPoints(p1, p2));
+//    }
+
+	private void runIA() {
+		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
+		while (!nodesWithPalet.isEmpty()){
+			List<Integer> nodesWithPaletCloseFromRobot = getNodesWithPaletCloseFromRobot(nodesWithPalet, 5);
+			parser.parse(nodesWithPaletCloseFromRobot, getNodeWithRobot(), true);
+			
+			//On récupère les actions à effectué !
+			Point paletToGet = new Point(0,0);
+			double angleToRotate = 0.0;
+			boolean turnLeft =true;
+			// TODO ICI calcul d'angle
+			propulsion.rotate((float)angleToRotate, turnLeft, false);
+			if(graber.isClose())
+				graber.open();
+			while(propulsion.isRunning()){
+				propulsion.checkState();
+				graber.checkState();
+				if(input.escapePressed())
+					return;
+			}
+			propulsion.run(true);
+			while(propulsion.isRunning() && !pression.isPressed()){
+				propulsion.checkState();
+				if(input.escapePressed())
+					return;
+			}
+			propulsion.stopMoving();
+			propulsion.orientateNorth();
+			graber.close();
+						
+		}
+	}
+
+	private char getNodeWithRobot() {
+		int robotX = this.robotPosition.getX();
+		int robotY = this.robotPosition.getY();
+		int delta = 1000;
+		int index = -1;
+		for(int i=0; i<this.nodesPosition.size(); i++){
+			Point p = this.nodesPosition.get(i);
+			int tmpDelta = Math.abs(robotX - p.getX()) + Math.abs(robotY - p.getY());
+			if (tmpDelta < delta){
+				tmpDelta = delta;
+				index = i;
+			}
+		}
+		return (char) (index+65);
+	}
+
+	private List<Integer> getNodesWithPalet(List<Point> paletsPosition) {
+		List<Integer> nodesWithPalet = new ArrayList<Integer>();
+		for(Point palet : paletsPosition){
+			int paletX = palet.getX();
+			int paletY = palet.getY();
+			int delta = 1000;
+			int index = -1;
+			if (paletX > R2D2Constants.XPOSITION_LINE_CAMP_1 && paletX < R2D2Constants.XPOSITION_LINE_CAMP_2){
+				for(int i=0; i<this.nodesPosition.size(); i++){
+					Point p = this.nodesPosition.get(i);
+					int tmpDelta = Math.abs(paletX - p.getX()) + Math.abs(paletY - p.getY());
+					if (tmpDelta < delta){
+						tmpDelta = delta;
+						index = i;
+					}
+				}
+				nodesWithPalet.add(index);
+			}
+		}
+		return nodesWithPalet;
+	}
+	
+	private List<Integer> getNodesWithPaletCloseFromRobot(List<Integer> nodesWithPalet, int nbNodes) {
+		List<Integer> nodesWithPaletCloseFromRobot = new ArrayList<Integer>();
+		Integer[] deltaForClosestNodes = new Integer[nodesWithPalet.size()];
+		int robotX = this.robotPosition.getX();
+		int robotY = this.robotPosition.getY();
+		for(int i=0; i<nodesWithPalet.size(); i++){
+			Point p = this.nodesPosition.get(nodesWithPalet.get(i));
+			deltaForClosestNodes[i] = Math.abs(robotX - p.getX()) + Math.abs(robotY - p.getY());
+		}
+		ArrayIndexComparator<Integer> comparator = new ArrayIndexComparator<Integer>(deltaForClosestNodes);
+		Integer[] indexes = comparator.createIndexArray();
+		Arrays.sort(indexes, comparator);
+		for(int i=0; i<nbNodes; i++){
+			nodesWithPaletCloseFromRobot.add(indexes[i]);
+		}
+		return nodesWithPaletCloseFromRobot;
 	}
 
 	/**
