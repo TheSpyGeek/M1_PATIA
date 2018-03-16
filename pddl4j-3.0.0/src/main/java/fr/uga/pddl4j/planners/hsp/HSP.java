@@ -33,7 +33,6 @@ import fr.uga.pddl4j.util.MemoryAgent;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -130,91 +129,13 @@ public final class HSP {
      */
     private Properties arguments;
 
-    /* Krobot changes */
-
-
-    private Domain myDomain;
-    private Parser myParser;
-
-
     /**
      * Creates a new planner.
      *
      * @param arguments the arguments of the planner.
      */
-    private HSP(final Properties arguments) {
+    public HSP(final Properties arguments) {
         this.arguments = arguments;
-    }
-
-    /**
-    *
-    * Create new Planner
-    *
-    * @author thespygeek
-    * @param domain the domain in a String
-    *
-    */
-    public HSP(String domain){
-        myParser = new Parser();
-        try {
-            myParser.parseStringDomain(domain);
-
-            myDomain = myParser.getDomain();
-            System.out.println("Parsing domain done successfully");
-
-
-
-        } catch(IOException e){
-
-            System.out.println("\nUnexpected error during parse domain:");
-            e.printStackTrace(System.out);
-        }
-
-    }
-
-    /**
-     *
-     * Cette methode parse le probleme contenu dans une string puis encode le problem
-     *   
-     * @return the encoded problem.
-     */
-    public CodedProblem parseProblemAndEncode(String problem) {
-
-        /* je sais pas ce que c'est */
-        final int traceLevel = 5;
-
-        // final String ops = (String) this.arguments.get(HSP.Argument.DOMAIN);
-        // final String facts = (String) this.arguments.get(HSP.Argument.PROBLEM);
-        try {
-            myParser.parseStringProblem(problem);
-        } catch (IOException fnfException) {
-            //TODO manage the error here
-            fnfException.printStackTrace();
-        }
-        if (!myParser.getErrorManager().isEmpty()) {
-            myParser.getErrorManager().printAll();
-            System.exit(0);
-        }
-
-        final Problem myProblem = myParser.getProblem();
-        // final int traceLevel = (Integer) this.arguments.get(HSP.Argument.TRACE_LEVEL);
-
-        if (traceLevel > 0 && traceLevel != 8) {
-            System.out.println();
-            System.out.println("Parsing problem done successfully\n");
-        }
-        if (traceLevel == 8) {
-            Encoder.setLogLevel(0);
-        } else {
-            Encoder.setLogLevel(Math.max(0, traceLevel - 1));
-        }
-
-        long begin = System.currentTimeMillis();
-        final CodedProblem pb = Encoder.encode(myDomain, myProblem);
-        long end = System.currentTimeMillis();
-        this.preprocessingTime = end - begin;
-        this.problemMemory = MemoryAgent.deepSizeOf(pb);
-        return pb;
     }
 
     /**
@@ -256,7 +177,7 @@ public final class HSP {
         final CodedProblem pb = Encoder.encode(domain, problem);
         long end = System.currentTimeMillis();
         this.preprocessingTime = end - begin;
-        this.problemMemory = MemoryAgent.deepSizeOf(pb);
+        // this.problemMemory = MemoryAgent.deepSizeOf(pb);
         return pb;
     }
 
@@ -423,9 +344,9 @@ public final class HSP {
             this.searchingTime = end - begin;
         }
         // Compute the memory used by the search
-        this.searchingMemory += MemoryAgent.deepSizeOf(closeSet) + MemoryAgent.deepSizeOf(openSet)
-            + MemoryAgent.deepSizeOf(open);
-        this.searchingMemory += MemoryAgent.deepSizeOf(heuristic);
+        // this.searchingMemory += MemoryAgent.deepSizeOf(closeSet) + MemoryAgent.deepSizeOf(openSet)
+        //     + MemoryAgent.deepSizeOf(open);
+        // this.searchingMemory += MemoryAgent.deepSizeOf(heuristic);
         this.nbOfExploredNodes = closeSet.size();
         // return the plan computed or null if no plan was found
         return plan;
@@ -517,7 +438,7 @@ public final class HSP {
      * @param args the arguments from the command line.
      * @return The arguments of the planner.
      */
-    private static Properties parseArguments(String[] args) {
+    public static Properties parseArguments(String[] args) {
         final Properties arguments = HSP.getDefaultArguments();
         try {
             for (int i = 0; i < args.length; i++) {

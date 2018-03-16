@@ -21,12 +21,9 @@ package fr.uga.pddl4j.parser;
 
 import fr.uga.pddl4j.parser.lexer.Lexer;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -152,78 +149,6 @@ public final class Parser {
             this.checkDomainConstraints();
             this.checkOperatorsDeclaration();
             this.checkDerivedPredicatesDeclaration();
-        } catch (Throwable exception) {
-            //System.out.println("\nUnexpected error:");
-            //exception.printStackTrace(System.out);
-        }
-    }
-
-    /**
-     * Parses a planning domain from a string.
-     *
-     * @author thespygeek
-     * @param domain the file that contains the planning domains.
-     * @throws IOException when file cannot be created
-     */
-    public void parseStringDomain(String domain) throws IOException {
-        /* on crée un fichier temporaire */
-        File temp = File.createTempFile("domain",".pddl");
-
-        /* On rempli ce fichier temporaire */
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(temp))) {
-            writer.write(domain);
-        }
-        
-        try {
-            // Parse and check the domain
-            this.lexer = new Lexer(new FileInputStream(temp));
-            lexer.setErrorManager(this.mgr);
-            lexer.setFile(temp);
-            this.lexer.domain();
-            this.domain = this.lexer.getDomain();
-            this.checkTypesDeclaration();
-            this.checkConstantsDeclaration();
-            this.checkPredicatesDeclaration();
-            this.checkFunctionsDeclaration();
-            this.checkDomainConstraints();
-            this.checkOperatorsDeclaration();
-            this.checkDerivedPredicatesDeclaration();
-        } catch (Throwable exception) {
-            //System.out.println("\nUnexpected error:");
-            //exception.printStackTrace(System.out);
-        }
-    }
-
-    /**
-     * Parses a planning problem from a String.
-     *
-     * @author thespygeek
-     * @param problem the file that contains the planning problem.
-     * @throws IOException if the specified domain or problem file does not exist.
-     */
-    public void parseStringProblem(String problem) throws IOException {
-
-        /* on crée un fichier temporaire */
-        File temp = File.createTempFile("domain",".pddl");
-
-        /* On rempli ce fichier temporaire */
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(temp))) {
-            writer.write(problem);
-        }
-
-        try {
-            // Parse and check the domain
-            this.lexer = new Lexer(new FileInputStream(temp));
-            lexer.setErrorManager(this.mgr);
-            this.lexer.setFile(temp);
-            this.lexer.problem();
-            this.problem = this.lexer.getProblem();
-            this.checkDomainName();
-            this.checkObjectsDeclaration();
-            this.checkInitialFacts();
-            this.checkGoal();
-            this.checkProblemConstraints();
-            this.checkMetric();
         } catch (Throwable exception) {
             //System.out.println("\nUnexpected error:");
             //exception.printStackTrace(System.out);
