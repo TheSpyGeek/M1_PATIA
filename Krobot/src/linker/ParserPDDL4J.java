@@ -20,14 +20,15 @@ public class ParserPDDL4J {
 	
 	public static void main(String[] args) {
 		ParserPDDL4J parser = new ParserPDDL4J();
-		List<String> nodesWithPalet = Arrays.asList("D", "E", "F", "G", "H", "I", "J", "K", "L");
-		parser.parse(nodesWithPalet, "K", true);
+		List<Character> nodesWithPalet = Arrays.asList('D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L');
+		List<Integer> nodesWithPalet2= Arrays.asList(3, 4, 5, 6, 7);
+		parser.parse(nodesWithPalet2, 'B', true);
 		parser.runProblem();
 	}
 	
-	public void parse(List<String> nodesWithPalet, String nodeRobot, boolean robotFree){
+	public void parse(List<Integer> nodesWithPalet, char nodeRobot, boolean robotFree){
 		problem = problemDefine;
-		problem += "	(:objects A D E F G H I J K L - node";
+		problem += "	(:objects A B C D E F G H I J K L - node";
 		for (int i=0; i<nodesWithPalet.size(); i++)
 			problem += " P" + i;
 		problem += " - palet)\n";
@@ -35,7 +36,7 @@ public class ParserPDDL4J {
 		if (robotFree) 
 			problem += "		(robotFree)\n";
 		for (int i=0; i<nodesWithPalet.size(); i++){
-			problem += "		(paletOnNode P" + i + " " + nodesWithPalet.get(i) + ")\n";
+			problem += "		(paletOnNode P" + i + " " + (char) (nodesWithPalet.get(i)+65) + ")\n";
 		}
 		problem += "		(robotOnNode " + nodeRobot + ")\n";
 		problem += problemInit;
@@ -78,9 +79,11 @@ public class ParserPDDL4J {
 	}
 	
 	private static String problemDefine = "(define (problem ROBOTPARTY) (:domain KROBOT)\n";
-	private static String problemInit = "		(connected A D)\n" + 
-			"		(connected A E)\n" + 
-			"		(connected A F)\n" + 
+	private static String problemInit = "		(connected A B)\n" + 
+			"		(connected A D)\n" + 
+			"		(connected B C)\n" + 
+			"		(connected B E)\n" + 
+			"		(connected C F)\n" + 
 			"		(connected D E)\n" + 
 			"		(connected D G)\n" + 
 			"		(connected E F)\n" + 
@@ -94,6 +97,8 @@ public class ParserPDDL4J {
 			"		(connected J K)\n" +
 			"		(connected K L)\n" +
 			"		(nodeInCamp A)\n" + 
+			"		(nodeInCamp B)\n" +
+			"		(nodeInCamp C)\n" +
 			"	)\n" +
 			"	(:goal\n";
 	
@@ -105,8 +110,8 @@ public class ParserPDDL4J {
     		"		(paletOnNode ?p - palet ?n - node)\n" + 
     		"		(robotOnNode ?n - node)\n" + 
     		"		(paletOnRobot ?p - palet)\n" + 
-    		"		(paletInCamp ?p)\n" + 
-    		"		(nodeInCamp ?n)\n" + 
+    		"		(paletInCamp ?p - palet)\n" + 
+    		"		(nodeInCamp ?n - node)\n" + 
     		"		(hasPaletInCamp)\n" + 
     		"		(robotFree)\n" + 
     		"	)\n" + 
