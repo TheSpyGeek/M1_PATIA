@@ -186,62 +186,15 @@ public final class HSP {
      *
      * @param pb the problem to solve.
      */
-    public void search(final CodedProblem pb) {
+    public List<String> search(final CodedProblem pb) {
 
         List<String> plan = null;
+
         if (pb.isSolvable()) {
             plan = this.aStarSearch(pb);
         }
 
-        // The rest it is just to print the result
-        final int traceLevel = (Integer) this.arguments.get(HSP.Argument.TRACE_LEVEL);
-        if (traceLevel > 0 && traceLevel != 8) {
-            if (pb.isSolvable()) {
-                if (plan != null) {
-                    System.out.printf("\nfound plan as follows:\n\n");
-                    for (int i = 0; i < plan.size(); i++) {
-                        System.out.printf("time step %4d: %s\n", i, plan.get(i));
-                    }
-                } else {
-                    System.out.printf("\nno plan found\n\n");
-                }
-            } else {
-                System.out.printf("goal can be simplified to FALSE. no plan will solve it\n\n");
-            }
-            System.out.printf("\ntime spent: %8.2f seconds encoding ("
-                + pb.getOperators().size() + " ops, " + pb.getRevelantFacts().size()
-                + " facts)\n", (this.preprocessingTime / 1000.0));
-            System.out.printf("            %8.2f seconds searching\n",
-                (this.searchingTime / 1000.0));
-            System.out.printf("            %8.2f seconds total time\n",
-                ((this.preprocessingTime + searchingTime) / 1000.0));
-            System.out.printf("\n");
-            System.out.printf("memory used: %8.2f MBytes for problem representation\n",
-                +(this.problemMemory / (1024.0 * 1024.0)));
-            System.out.printf("             %8.2f MBytes for searching\n",
-                +(this.searchingMemory / (1024.0 * 1024.0)));
-            System.out.printf("             %8.2f MBytes total\n",
-                +((this.problemMemory + this.searchingMemory) / (1024.0 * 1024.0)));
-            System.out.printf("\n\n");
-        }
-        if (traceLevel == 8) {
-            String problem = (String) this.arguments.get(HSP.Argument.PROBLEM);
-            String[] strArray = problem.split("/");
-            String pbFile = strArray[strArray.length - 1];
-            String pbName = pbFile.substring(0, pbFile.indexOf("."));
-            System.out.printf("%5s %8d %8d %8.2f %8.2f %10d", pbName, pb.getOperators().size(),
-                pb.getRevelantFacts().size(), (this.preprocessingTime / 1000.0),
-                (this.problemMemory / (1024.0 * 1024.0)), this.nbOfExploredNodes);
-            if (plan != null) {
-                System.out.printf("%8.2f %8.2f %8.2f %8.2f %5d\n", (this.searchingTime / 1000.0),
-                    ((this.preprocessingTime + searchingTime) / 1000.0),
-                    (this.searchingMemory / (1024.0 * 1024.0)),
-                    ((this.problemMemory + this.searchingMemory) / (1024.0 * 1024.0)),
-                    plan.size());
-            } else {
-                System.out.printf("%8s %8s %8s %8s %5s\n", "-", "-", "-", "-", "-");
-            }
-        }
+        return plan;
     }
 
     /**
