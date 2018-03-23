@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 
 import ServerSearch.Point;
 import ServerSearch.Server;
@@ -41,9 +42,9 @@ public class Controler {
 	protected ParserPDDL4J	 parser		= null;
 	protected List<Point> nodesPosition = null;
 	protected Point		  robotPosition	= null;
-	protected double		 robotAngle	= 0.0;
+	protected Point		   robotVecteur	= null;
 	
-	private ArrayList<TImedMotor> motors     = new ArrayList<TImedMotor>();
+	private ArrayList<TImedMotor> motors = new ArrayList<TImedMotor>();
 
 	public Controler(){
 		propulsion = new Propulsion();
@@ -82,8 +83,18 @@ public class Controler {
 				"Appuyez sur OK si la","ligne noire est à gauche",
 				"Appuyez sur tout autre", "elle est à droite");
 			calibrateNodePosition();
-			//TODO calibrate robotAngle
-			runIA();
+			screen.drawText("Lancer", 
+					"Mettre un palet sur","le robot","OK si haut autre", "si bas");
+			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
+				calibrateRobotPositionAndVector(true);
+			}else{
+				calibrateRobotPositionAndVector(false);
+			}
+			screen.drawText("Lancer", 
+					"Ok pour run");
+			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
+				runIA();
+			}
 //			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
 //				mainLoop(true);
 //			}else{
@@ -114,6 +125,44 @@ public class Controler {
 				this.nodesPosition.add(i*3, a);
 			}
 		}
+		for(Point node : this.nodesPosition){
+			System.out.println(node);
+		}
+	}
+	
+	private void calibrateRobotPositionAndVector(boolean top) {
+		List<Point> tmp = server.run();
+		Collections.sort(tmp);
+		this.robotPosition = tmp.get(top ? 0 : tmp.size()-1);
+		System.out.println("RobotPosition : "+this.robotPosition);
+		Point far;
+		Point far1 = tmp.get(tmp.size()-3);
+		Point far2 = tmp.get(tmp.size()-2);
+		Point far3 = tmp.get(tmp.size()-1);
+		if (top){
+			far1 = tmp.get(tmp.size()-3);
+			far2 = tmp.get(tmp.size()-2);
+			far3 = tmp.get(tmp.size()-1);
+		} else {
+			far1 = tmp.get(0);
+			far2 = tmp.get(1);
+			far3 = tmp.get(2);
+		}
+		System.out.println(far1 + " " + far2 + " " + far3);
+		if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far2.getX()-robotPosition.getX())){
+			if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
+				far = far1;
+			} else {
+				far = far3;
+			}
+		} else if (Math.abs(far2.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
+			far = far2;
+		} else {
+			far = far3;
+		}
+		System.out.println("Far point : "+far );
+		robotVecteur = new Point(far.getX() - this.robotPosition.getX(), far.getY() - this.robotPosition.getY());
+		System.out.println("VecteurRobot="+robotVecteur);
 	}
 	
 //	public static double angleBetweenPoints(Point a, Point b) {
@@ -143,9 +192,11 @@ public class Controler {
 			
 			//On récupère les actions à effectué !
 			Point paletToGet = new Point(0,0);
-			double angleToRotate = 0.0;
-			boolean turnLeft =true;
-			// TODO ICI calcul d'angle
+			double angleToRotate = angleCalculation(paletToGet);
+			boolean turnLeft = angleToRotate < 0;
+			angleToRotate = Math.abs(angleToRotate);
+			System.out.println("Turn Left = "+turnLeft);
+			
 			propulsion.rotate((float)angleToRotate, turnLeft, false);
 			if(graber.isClose())
 				graber.open();
@@ -167,6 +218,26 @@ public class Controler {
 						
 		}
 	}
+
+	private double angleCalculation(Point paletToGet) {
+		System.out.println("PaletToGet" + paletToGet);
+		Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
+		double normRabPal = Math.sqrt(Math.pow(vRobPal.getX(), 2) + Math.pow(vRobPal.getY(), 2));
+		double normRobVec = Math.sqrt(Math.pow(robotVecteur.getX(), 2) + Math.pow(robotVecteur.getY(), 2));
+		double degree = Math.toDegrees(Math.acos(((vRobPal.getX()*robotVecteur.getX()) + (vRobPal.getY()*robotVecteur.getY())) / (normRabPal * normRobVec)));
+		if ((robotVecteur.getX()*-vRobPal.getY()) - robotVecteur.getY()*vRobPal.getX() < 0){
+			degree = - degree;
+		}
+		System.out.println("Degree to turn = "+degree);
+		return degree;
+	}
+	
+//	private double angleCalculation(Point paletToGet) {
+//		Point northPoint = new Point(this.robotPosition.getX(), paletToGet.getY());
+//		double disRobotToNorth = Math.sqrt(Math.pow((northPoint.getX() - this.robotPosition.getX()), 2) + Math.pow((northPoint.getY() - this.robotPosition.getY()), 2));
+//		double disRobotToPalet = Math.sqrt(Math.pow((paletToGet.getX() - this.robotPosition.getX()), 2) + Math.pow((paletToGet.getY() - this.robotPosition.getY()), 2));
+//		return Math.toDegrees(Math.acos((disRobotToNorth/disRobotToPalet)));
+//	}
 
 	private char getNodeWithRobot() {
 		int robotX = this.robotPosition.getX();
