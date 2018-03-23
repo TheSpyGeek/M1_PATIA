@@ -1,3 +1,37 @@
+Output redirected
+Executing jrun -cp /home/lejos/programs/Krobot.jar lejos.internal.ev3.EV3Wrapper TestRobot in /home/lejos/programs
+Program finished
+Finding files ...
+Running program: /home/lejos/programs/Krobot.jar
+Executing jrun -cp /home/lejos/programs/Krobot.jar lejos.internal.ev3.EV3Wrapper TestRobot in /home/lejos/programs
+Start searching
+{44, 280}
+{151, 195}
+{97, 195}
+{42, 195}
+{44, 145}
+{97, 133}
+{153, 131}
+{97, 64}
+{153, 62}
+Finished
+{42, 195}
+Start searching
+{44, 280}
+{151, 195}
+{97, 195}
+{42, 195}
+{44, 145}
+{97, 133}
+{153, 131}
+{153, 62}
+{97, 63}
+Finished
+RobotPosition : {42, 195}
+{151, 195} {153, 131} {153, 62}
+Far point : {151, 195}
+VecteurRobot={109, 0}
+Start searching
 {44, 280}
 {151, 195}
 {97, 195}
