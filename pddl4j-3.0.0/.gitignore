@@ -3,7 +3,6 @@
 bin
 out
 lib
-build/
 *.class
 
 # Generated files #
