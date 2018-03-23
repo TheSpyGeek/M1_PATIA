@@ -1,21 +1,26 @@
 package linker;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import fr.uga.pddl4j.encoding.CodedProblem;
 import fr.uga.pddl4j.encoding.Encoder;
 import fr.uga.pddl4j.parser.Parser;
 import fr.uga.pddl4j.planners.hsp.HSP;
 import fr.uga.pddl4j.util.BitOp;
-import fr.uga.pddl4j.util.Plan;
+//import fr.uga.pddl4j.util.Plan;
 
 public class ParserPDDL4J {
 	Parser parser = new Parser();
 	String problem;
 	
 	public ParserPDDL4J() {
-		parser.parseStringDomain(domainString);
+
 	}
 	
 	public static void main(String[] args) {
@@ -23,7 +28,7 @@ public class ParserPDDL4J {
 		List<Character> nodesWithPalet = Arrays.asList('D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L');
 		List<Integer> nodesWithPalet2= Arrays.asList(3, 4, 5, 6, 7);
 		parser.parse(nodesWithPalet2, 'B', true);
-		parser.runProblem();
+//		parser.runProblem();
 	}
 	
 	public void parse(List<Integer> nodesWithPalet, char nodeRobot, boolean robotFree){
@@ -52,30 +57,53 @@ public class ParserPDDL4J {
 		problem += 	"	)\n" + 
 					")";
 		System.out.println(problem);
-		parser.parseStringProblem(problem);
+		
+		
+//		parser.parseStringProblem(problem);
 	}
 	
-	public void runProblem(){
-		HSP planner = new HSP();
-		planner.setTimeOut(10);
-		planner.setTraceLevel(0);
-		planner.setSaveState(false);
-        CodedProblem cp = Encoder.encode(parser.getDomain(), parser.getProblem());
-        Plan plan = null;
-        if (cp.isSolvable()) {
-            plan = planner.search(cp);
+	public void runProblem() throws IOException{
+		
+		String myproblem = problemInit;
+		myproblem += "	(:objects A B C D E F G H I J K L - node";
+		
+		File tempDomain = new File("domain.pddl");
+
+        /* On rempli ce fichier temporaire */
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempDomain))) {
+            writer.write(domainString);
         }
-        if (plan == null) { // no solution in TIMEOUT computation time
-            System.out.println("No solution found in 10 seconds for the problem");
-        } else if (plan.isEmpty()) { // Empty solution
-            System.out.println("Empty solution for the problem");
-        } else { // Save output plan
-        	for(BitOp action : plan.actions()){
-        		System.out.println(action.getName());
-        	}
-        	System.out.println("PLAN TROUVE !!!!!!!");
-            System.out.println(cp.toString(plan));
+        
+        File tempProblem = new File("problem.pddl");
+
+        /* On rempli ce fichier temporaire */
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempProblem))) {
+            writer.write(myproblem);
         }
+		
+		String [] argumentsString = {"-o", "domain.pddl", "-f", "problem.pddl" };
+        
+		final Properties arguments = HSP.parseArguments(argumentsString);
+		
+		HSP planner = new HSP(arguments);
+		
+	
+		final CodedProblem Cbproblem = planner.parseAndEncode();
+        
+        // Search for a solution and print the result
+        List<String> plan = planner.search(Cbproblem);
+		
+        if(plan != null) {
+        	
+        	System.out.println("Plan:");
+    		for(String s: plan) {
+    			System.out.println(s);
+    		}
+        }
+		
+		
+		
+		
 	}
 	
 	private static String problemDefine = "(define (problem ROBOTPARTY) (:domain KROBOT)\n";
