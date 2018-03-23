@@ -82,14 +82,7 @@ public class Controler {
 			screen.drawText("Lancer", 
 				"Appuyez sur OK si la","ligne noire est à gauche",
 				"Appuyez sur tout autre", "elle est à droite");
-			calibrateNodePosition();
-			screen.drawText("Lancer", 
-					"Mettre un palet sur","le robot","OK si haut autre", "si bas");
-			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-				calibrateRobotPositionAndVector(true);
-			}else{
-				calibrateRobotPositionAndVector(false);
-			}
+			
 			screen.drawText("Lancer", 
 					"Ok pour run");
 			
