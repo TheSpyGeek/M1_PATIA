@@ -111,28 +111,56 @@ public class MyController {
 			return;
 		}
 		Collections.sort(tmp);
+		System.out.println("Point triées :");
+		for(Point p : tmp)
+			System.out.println(p);
 		for(int i=0; i<3; i++){
 			Point a = tmp.get(i*3);
 			Point b = tmp.get(i*3+1);
 			Point c = tmp.get(i*3+2);
 			if (a.getY() < b.getY() && a.getY() < c.getY()){
 				this.nodesPosition.add(i*3, a);
-			} else if (a.getY() < b.getY() && c.getY() < a.getY()){
-				this.nodesPosition.add(i*3, a);
-			} else if (b.getY() < a.getY() && a.getY() < c.getY()){
-				this.nodesPosition.add(i*3, a);
-			} else if (b.getY() < a.getY() && a.getY() < c.getY()){
-				this.nodesPosition.add(i*3, a);
+				if (b.getY() < c.getY()){
+					this.nodesPosition.add((i*3)+1, b);
+					this.nodesPosition.add((i*3)+2, c);
+				}
+				else{
+					this.nodesPosition.add((i*3)+1, c);
+					this.nodesPosition.add((i*3)+2, b);
+				}
+			} else if (b.getY() < a.getY() && b.getY() <c.getY()){
+				this.nodesPosition.add(i*3, b);
+				if (a.getY() < c.getY()){
+					this.nodesPosition.add((i*3)+1, a);
+					this.nodesPosition.add((i*3)+2, c);
+				}
+				else{
+					this.nodesPosition.add((i*3)+1, c);
+					this.nodesPosition.add((i*3)+2, a);
+				}
+			} else {
+				this.nodesPosition.add(i*3, c);
+				if (a.getY() < b.getY()){
+					this.nodesPosition.add((i*3)+1, a);
+					this.nodesPosition.add((i*3)+2, b);
+				}
+				else{
+					this.nodesPosition.add((i*3)+1, b);
+					this.nodesPosition.add((i*3)+2, a);
+				}
 			}
 		}
-		for(Point node : this.nodesPosition){
+		System.out.println("Nodes : ");
+		for(Point node : this.nodesPosition)
 			System.out.println(node);
-		}
 	}
 	
 	private void calibrateRobotPositionAndVector(boolean top) {
 		List<Point> tmp = server.run();
 		Collections.sort(tmp);
+		System.out.println("Sorted palet :");
+		for (Point p : tmp)
+			System.out.println(p);
 		this.robotPosition = tmp.get(top ? 0 : tmp.size()-1);
 		System.out.println("RobotPosition : "+this.robotPosition);
 		Point far;
