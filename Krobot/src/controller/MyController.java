@@ -177,13 +177,13 @@ public class MyController {
 			far3 = tmp.get(2);
 		}
 		System.out.println(far1 + " " + far2 + " " + far3);
-		if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far2.getX()-robotPosition.getX())){
-			if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
+		if (Math.abs(far1.getY()-robotPosition.getY()) < Math.abs(far2.getY()-robotPosition.getY())){
+			if (Math.abs(far1.getY()-robotPosition.getY()) < Math.abs(far3.getY()-robotPosition.getY())){
 				far = far1;
 			} else {
 				far = far3;
 			}
-		} else if (Math.abs(far2.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
+		} else if (Math.abs(far2.getY()-robotPosition.getY()) < Math.abs(far3.getY()-robotPosition.getY())){
 			far = far2;
 		} else {
 			far = far3;
