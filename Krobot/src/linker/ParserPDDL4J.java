@@ -9,11 +9,8 @@ import java.util.List;
 import java.util.Properties;
 
 import fr.uga.pddl4j.encoding.CodedProblem;
-import fr.uga.pddl4j.encoding.Encoder;
 import fr.uga.pddl4j.parser.Parser;
 import fr.uga.pddl4j.planners.hsp.HSP;
-import fr.uga.pddl4j.util.BitOp;
-//import fr.uga.pddl4j.util.Plan;
 
 public class ParserPDDL4J {
 	Parser parser = new Parser();
@@ -23,13 +20,6 @@ public class ParserPDDL4J {
 
 	}
 	
-	public static void main(String[] args) {
-		ParserPDDL4J parser = new ParserPDDL4J();
-		List<Character> nodesWithPalet = Arrays.asList('D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L');
-		List<Integer> nodesWithPalet2= Arrays.asList(3, 4, 5, 6, 7);
-		parser.parse(nodesWithPalet2, 'B', true);
-//		parser.runProblem();
-	}
 	
 	public void parse(List<Integer> nodesWithPalet, char nodeRobot, boolean robotFree){
 		problem = problemDefine;
@@ -64,8 +54,7 @@ public class ParserPDDL4J {
 	
 	public void runProblem() throws IOException{
 		
-		String myproblem = problemInit;
-		myproblem += "	(:objects A B C D E F G H I J K L - node";
+
 		
 		File tempDomain = new File("domain.pddl");
 
@@ -78,7 +67,7 @@ public class ParserPDDL4J {
 
         /* On rempli ce fichier temporaire */
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempProblem))) {
-            writer.write(myproblem);
+            writer.write(problem);
         }
 		
 		String [] argumentsString = {"-o", "domain.pddl", "-f", "problem.pddl" };

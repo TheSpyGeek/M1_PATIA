@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import ServerSearch.Point;
+import ServerSearch.Server;
 import fr.uga.pddl4j.encoding.CodedProblem;
 import fr.uga.pddl4j.parser.Parser;
 import fr.uga.pddl4j.planners.hsp.HSP;
@@ -20,6 +23,11 @@ public class TestPDDL4J {
 	public static void main(String [] args) throws IOException {
 		
 		ParserPDDL4J parser = new ParserPDDL4J();
+		
+		List<Integer> points= Arrays.asList(3, 4, 5, 6, 7);
+		
+		
+		parser.parse(points, 'A', true);
 		
 		parser.runProblem();
 	
