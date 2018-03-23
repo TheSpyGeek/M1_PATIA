@@ -1,46 +1,86 @@
 Output redirected
 Executing jrun -cp /home/lejos/programs/Krobot.jar lejos.internal.ev3.EV3Wrapper TestRobot in /home/lejos/programs
+Start searching
+{93, 274}
+{93, 197}
+{150, 195}
+{42, 195}
+{97, 131}
+{153, 131}
+{38, 131}
+{153, 62}
+{95, 62}
+{38, 62}
+Finished
+Error bad number of palet on table
 Program finished
-Finding files ...
-Running program: /home/lejos/programs/Krobot.jar
 Executing jrun -cp /home/lejos/programs/Krobot.jar lejos.internal.ev3.EV3Wrapper TestRobot in /home/lejos/programs
 Start searching
-{44, 280}
-{151, 195}
-{97, 195}
+{93, 197}
+{150, 195}
 {42, 195}
-{44, 145}
-{97, 133}
+{95, 131}
 {153, 131}
-{97, 64}
+{38, 131}
 {153, 62}
+{95, 62}
+{38, 62}
 Finished
+Point tri?es :
+{38, 131}
+{38, 62}
 {42, 195}
-Start searching
-{44, 280}
-{151, 195}
-{97, 195}
-{42, 195}
-{44, 145}
-{97, 133}
+{93, 197}
+{95, 131}
+{95, 62}
+{150, 195}
 {153, 131}
 {153, 62}
-{97, 63}
+Nodes : 
+{38, 62}
+{38, 131}
+{42, 195}
+{95, 62}
+{95, 131}
+{93, 197}
+{153, 62}
+{153, 131}
+{150, 195}
+Start searching
+{93, 197}
+{150, 195}
+{42, 195}
+{95, 131}
+{153, 131}
+{38, 131}
+{153, 62}
+{95, 62}
+{38, 62}
 Finished
-RobotPosition : {42, 195}
-{151, 195} {153, 131} {153, 62}
-Far point : {151, 195}
-VecteurRobot={109, 0}
-Start searching
-{44, 280}
-{151, 195}
-{97, 195}
+Sorted palet :
+{38, 131}
+{38, 62}
 {42, 195}
-{44, 145}
-{97, 133}
+{93, 197}
+{95, 131}
+{95, 62}
+{150, 195}
 {153, 131}
 {153, 62}
-{97, 63}
+RobotPosition : {38, 131}
+{150, 195} {153, 131} {153, 62}
+Far point : {150, 195}
+VecteurRobot={112, 64}
+Start searching
+{93, 197}
+{150, 195}
+{42, 195}
+{95, 131}
+{153, 131}
+{38, 131}
+{153, 62}
+{95, 62}
+{38, 62}
 Finished
 (define (problem ROBOTPARTY) (:domain KROBOT)
 	(:objects A B C D E F G H I J K L - node P0 P1 P2 P3 P4 - palet)
@@ -51,7 +91,7 @@ Finished
 		(paletOnNode P2 C)
 		(paletOnNode P3 D)
 		(paletOnNode P4 E)
-		(robotOnNode A)
+		(robotOnNode I)
 		(connected A B)
 		(connected A D)
 		(connected B C)
@@ -84,8 +124,6 @@ Finished
 	)
 )
 PaletToGet{0, 0}
-Degree to turn = 102.15494169722224
+Degree to turn = 135.9210746585506
 Turn Left = false
-Output redirected
 Program finished
-Failed to execute program: java.lang.NullPointerException
