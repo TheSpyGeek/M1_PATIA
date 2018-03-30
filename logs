@@ -1,0 +1,129 @@
+Output redirected
+Executing jrun -cp /home/lejos/programs/Krobot.jar lejos.internal.ev3.EV3Wrapper TestRobot in /home/lejos/programs
+Start searching
+{93, 274}
+{93, 197}
+{150, 195}
+{42, 195}
+{97, 131}
+{153, 131}
+{38, 131}
+{153, 62}
+{95, 62}
+{38, 62}
+Finished
+Error bad number of palet on table
+Program finished
+Executing jrun -cp /home/lejos/programs/Krobot.jar lejos.internal.ev3.EV3Wrapper TestRobot in /home/lejos/programs
+Start searching
+{93, 197}
+{150, 195}
+{42, 195}
+{95, 131}
+{153, 131}
+{38, 131}
+{153, 62}
+{95, 62}
+{38, 62}
+Finished
+Point tri?es :
+{38, 131}
+{38, 62}
+{42, 195}
+{93, 197}
+{95, 131}
+{95, 62}
+{150, 195}
+{153, 131}
+{153, 62}
+Nodes : 
+{38, 62}
+{38, 131}
+{42, 195}
+{95, 62}
+{95, 131}
+{93, 197}
+{153, 62}
+{153, 131}
+{150, 195}
+Start searching
+{93, 197}
+{150, 195}
+{42, 195}
+{95, 131}
+{153, 131}
+{38, 131}
+{153, 62}
+{95, 62}
+{38, 62}
+Finished
+Sorted palet :
+{38, 131}
+{38, 62}
+{42, 195}
+{93, 197}
+{95, 131}
+{95, 62}
+{150, 195}
+{153, 131}
+{153, 62}
+RobotPosition : {38, 131}
+{150, 195} {153, 131} {153, 62}
+Far point : {150, 195}
+VecteurRobot={112, 64}
+Start searching
+{93, 197}
+{150, 195}
+{42, 195}
+{95, 131}
+{153, 131}
+{38, 131}
+{153, 62}
+{95, 62}
+{38, 62}
+Finished
+(define (problem ROBOTPARTY) (:domain KROBOT)
+	(:objects A B C D E F G H I J K L - node P0 P1 P2 P3 P4 - palet)
+	(:init
+		(robotFree)
+		(paletOnNode P0 A)
+		(paletOnNode P1 B)
+		(paletOnNode P2 C)
+		(paletOnNode P3 D)
+		(paletOnNode P4 E)
+		(robotOnNode I)
+		(connected A B)
+		(connected A D)
+		(connected B C)
+		(connected B E)
+		(connected C F)
+		(connected D E)
+		(connected D G)
+		(connected E F)
+		(connected E H)
+		(connected F I)
+		(connected G H)
+		(connected G J)
+		(connected H I)
+		(connected H K)
+		(connected I L)
+		(connected J K)
+		(connected K L)
+		(nodeInCamp A)
+		(nodeInCamp B)
+		(nodeInCamp C)
+	)
+	(:goal
+		(and
+			(paletInCamp P0)
+			(paletInCamp P1)
+			(paletInCamp P2)
+			(paletInCamp P3)
+			(paletInCamp P4)
+		)
+	)
+)
+PaletToGet{0, 0}
+Degree to turn = 135.9210746585506
+Turn Left = false
+Program finished
