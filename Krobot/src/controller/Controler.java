@@ -183,6 +183,22 @@ public class Controler {
 //        Point p2 = new Point(-100, 1);
 //        System.out.println(angleBetweenPoints(p1, p2));
 //    }
+	/**
+	 * @author duvernet
+	 * Met à jour le vecteur de direction du Robot
+	 */
+	public void updateVecteurRobot() {
+		
+		
+	}
+	/**
+	 * @author duvernet
+	 * Met à jour la position du robot par rapport à son vecteur de direction
+	 * et l'equation de droite de la ligne de couleur croisée.
+	 */
+	public void updatePositionRobot() {
+		
+	}
 
 	private void runIA() {
 		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
@@ -254,7 +270,11 @@ public class Controler {
 		}
 		return (char) (index+65);
 	}
-
+	/**
+	 * @author Plinz
+	 * @param paletsPosition
+	 * @return
+	 */
 	private List<Integer> getNodesWithPalet(List<Point> paletsPosition) {
 		List<Integer> nodesWithPalet = new ArrayList<Integer>();
 		for(Point palet : paletsPosition){
