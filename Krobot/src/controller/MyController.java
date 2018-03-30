@@ -105,6 +105,7 @@ public class MyController {
 	}
 
 	private void calibrateNodePosition() {
+		this.server = new Server();
 		List<Point> tmp = server.run();
 		if (tmp.size() != 9){
 			System.out.println("Error bad number of palet on table");
@@ -156,6 +157,7 @@ public class MyController {
 	}
 	
 	private void calibrateRobotPositionAndVector(boolean top) {
+		this.server = new Server();
 		List<Point> tmp = server.run();
 		Collections.sort(tmp);
 		System.out.println("Sorted palet :");
