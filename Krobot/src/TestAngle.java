@@ -9,8 +9,8 @@ public class TestAngle {
 		v1.add(1);
 		v1.add(1);
 		
-		v2.add(1);
-		v2.add(0);
+		v2.add(-1);
+		v2.add(-2);
 		
 		System.out.println("v1 size "+ v1.size() );
 		System.out.println("v2 size "+ v2.size() );

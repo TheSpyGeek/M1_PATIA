@@ -67,12 +67,7 @@ public class Server {
 	 */
 	public Server(){
 		this.packet = new DatagramPacket(this.buffer, this.buffer.length);
-		try {
-			this.dsocket = new DatagramSocket(PORT);
-		} catch (SocketException e1) {
-			System.out.println(": Erreur, DatagramSocket non initialisé");
-			e1.printStackTrace();
-		}
+		
 		
 	}
 	
@@ -91,6 +86,12 @@ public class Server {
 	
 	public List<Point> run() {
 		System.out.println("Start searching");
+		try {
+			this.dsocket = new DatagramSocket(PORT);
+		} catch (SocketException e1) {
+			System.out.println(": Erreur, DatagramSocket non initialisé");
+			e1.printStackTrace();
+		}
 		/* on recupère le packet avec les coordonnées */
 		try {
 			this.dsocket.receive(this.packet);
@@ -116,6 +117,7 @@ public class Server {
 			}
         }
 		System.out.println("Finished");
+		interrupt();
 		return points;
 	}
 	

@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
-
 import ServerSearch.Point;
 import ServerSearch.Server;
 import lejos.hardware.Button;
@@ -161,31 +159,35 @@ public class MyController {
 		List<Point> tmp = server.run();
 		Collections.sort(tmp);
 		System.out.println("Sorted palet :");
-		for (Point p : tmp)
+		this.robotPosition = tmp.get(0);
+		for (Point p : tmp) {
+			if(top && this.robotPosition.getY() < p.getY()) {
+				this.robotPosition = p;
+			} else if(!top && this.robotPosition.getY() > p.getY()) {
+				this.robotPosition = p;
+			}
 			System.out.println(p);
-		this.robotPosition = tmp.get(top ? 0 : tmp.size()-1);
+		}
+			
+		//this.robotPosition = tmp.get(top ? 0 : tmp.size()-1);
 		System.out.println("RobotPosition : "+this.robotPosition);
 		Point far;
-		Point far1 = tmp.get(tmp.size()-3);
-		Point far2 = tmp.get(tmp.size()-2);
-		Point far3 = tmp.get(tmp.size()-1);
+		Point far1 = nodesPosition.get(2);
+		Point far2 = nodesPosition.get(5);
+		Point far3 = nodesPosition.get(8);
 		if (top){
-			far1 = tmp.get(tmp.size()-3);
-			far2 = tmp.get(tmp.size()-2);
-			far3 = tmp.get(tmp.size()-1);
-		} else {
-			far1 = tmp.get(0);
-			far2 = tmp.get(1);
-			far3 = tmp.get(2);
+			far1 = nodesPosition.get(0);
+			far2 = nodesPosition.get(3);
+			far3 = nodesPosition.get(6);
 		}
 		System.out.println(far1 + " " + far2 + " " + far3);
-		if (Math.abs(far1.getY()-robotPosition.getY()) < Math.abs(far2.getY()-robotPosition.getY())){
-			if (Math.abs(far1.getY()-robotPosition.getY()) < Math.abs(far3.getY()-robotPosition.getY())){
+		if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far2.getX()-robotPosition.getX())){
+			if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
 				far = far1;
 			} else {
 				far = far3;
 			}
-		} else if (Math.abs(far2.getY()-robotPosition.getY()) < Math.abs(far3.getY()-robotPosition.getY())){
+		} else if (Math.abs(far2.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
 			far = far2;
 		} else {
 			far = far3;
