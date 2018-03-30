@@ -252,7 +252,7 @@ public class MyController {
 			parser.parse(nodesWithPaletCloseFromRobot, getNodeWithRobot(), true);
 			
 			//On récupère les actions à effectué !
-			Point paletToGet = nodesPosition.get(0);
+			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
 			System.out.println("Palet to get : "+paletToGet);
 			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
