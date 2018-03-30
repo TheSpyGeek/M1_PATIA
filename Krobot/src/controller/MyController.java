@@ -48,9 +48,9 @@ public class MyController {
 	public MyController(){
 		propulsion = new Propulsion();
 		graber     = new Graber();
-//		color      = new ColorSensor();
+		color      = new ColorSensor();
 		pression   = new PressionSensor();
-//		vision     = new VisionSensor();
+		vision     = new VisionSensor();
 		screen     = new Screen();
 		input      = new InputHandler(screen);
 		server	   = new Server();
