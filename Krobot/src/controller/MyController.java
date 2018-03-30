@@ -47,14 +47,15 @@ public class MyController {
 	public MyController(){
 		propulsion = new Propulsion();
 		graber     = new Graber();
-		color      = new ColorSensor();
+//		color      = new ColorSensor();
 		pression   = new PressionSensor();
-		vision     = new VisionSensor();
+//		vision     = new VisionSensor();
 		screen     = new Screen();
 		input      = new InputHandler(screen);
 		server	   = new Server();
 		parser	   = new ParserPDDL4J();
 		nodesPosition = new ArrayList<Point>();
+		
 		motors.add(propulsion);
 		motors.add(graber);
 	}
@@ -215,6 +216,30 @@ public class MyController {
 //        Point p2 = new Point(-100, 1);
 //        System.out.println(angleBetweenPoints(p1, p2));
 //    }
+	
+	/*private void runIAPDDL() {
+		
+		List<String> moveToDo;
+		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
+		while (!nodesWithPalet.isEmpty()){
+			
+			// calcul node robot
+			char nodeRobot = '0';
+			parser.parse(nodesWithPalet, nodeRobot, true);
+			try {
+				moveToDo = parser.runProblem();
+				
+				
+			} catch (IOException e) {
+				System.err.println("Erreur lors du run problem");
+				e.printStackTrace();
+			}
+			
+			
+			nodesWithPalet = getNodesWithPalet(server.run());
+		}
+		
+	}*/
 
 	private void runIA() {
 		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());

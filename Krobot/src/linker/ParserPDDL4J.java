@@ -52,7 +52,7 @@ public class ParserPDDL4J {
 //		parser.parseStringProblem(problem);
 	}
 	
-	public void runProblem() throws IOException{
+	public List<String> runProblem() throws IOException{
 		
 
 		
@@ -90,7 +90,7 @@ public class ParserPDDL4J {
     		}
         }
 		
-		
+		return plan;
 		
 		
 	}
