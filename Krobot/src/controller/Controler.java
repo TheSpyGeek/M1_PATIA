@@ -95,7 +95,6 @@ public class Controler {
 		cleanUp();
 	}
 
-<<<<<<< HEAD
 	private void calibrateNodePosition() {
 		List<Point> tmp = server.run();
 		if (tmp.size() != 9){
