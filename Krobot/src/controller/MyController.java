@@ -177,13 +177,13 @@ public class MyController {
 			far3 = tmp.get(2);
 		}
 		System.out.println(far1 + " " + far2 + " " + far3);
-		if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far2.getX()-robotPosition.getX())){
-			if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
+		if (Math.abs(far1.getY()-robotPosition.getY()) < Math.abs(far2.getY()-robotPosition.getY())){
+			if (Math.abs(far1.getY()-robotPosition.getY()) < Math.abs(far3.getY()-robotPosition.getY())){
 				far = far1;
 			} else {
 				far = far3;
 			}
-		} else if (Math.abs(far2.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
+		} else if (Math.abs(far2.getY()-robotPosition.getY()) < Math.abs(far3.getY()-robotPosition.getY())){
 			far = far2;
 		} else {
 			far = far3;
@@ -219,9 +219,14 @@ public class MyController {
 			parser.parse(nodesWithPaletCloseFromRobot, getNodeWithRobot(), true);
 			
 			//On récupère les actions à effectué !
-			Point paletToGet = new Point(0,0);
+			Point paletToGet = nodesPosition.get(0);
+			System.out.println("Palet to get : "+paletToGet);
+			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
-			boolean turnLeft = angleToRotate < 0;
+			double zproduct = (vRobPal.getX() * robotVecteur.getY()) - (vRobPal.getY() * robotVecteur.getX());
+			double dotProd = (vRobPal.getX() * robotVecteur.getX()) + (vRobPal.getY() * robotVecteur.getY());
+			boolean turnLeft = (zproduct * dotProd) < 0;
+			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
 			angleToRotate = Math.abs(angleToRotate);
 			System.out.println("Turn Left = "+turnLeft);
 			
