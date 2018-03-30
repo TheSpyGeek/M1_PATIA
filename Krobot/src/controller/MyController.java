@@ -316,7 +316,7 @@ public class MyController {
 				graber.checkState();
 			}
 			propulsion.runFor(500, false);
-			
+			nodesWithPalet = getNodesWithPalet(server.run());
 		}
 	}
 
