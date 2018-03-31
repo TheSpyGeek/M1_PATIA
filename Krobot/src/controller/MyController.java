@@ -10,10 +10,12 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import ServerSearch.Point;
 import ServerSearch.Server;
 import lejos.hardware.Button;
+import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.Color;
 import linker.ParserPDDL4J;
 import motors.Graber;
@@ -23,7 +25,9 @@ import sensors.ColorSensor;
 import sensors.PressionSensor;
 import sensors.VisionSensor;
 import utils.ArrayIndexComparator;
+import utils.EquationLine;
 import utils.R2D2Constants;
+import utils.Tuple;
 import vue.InputHandler;
 import vue.Screen;
 
@@ -41,7 +45,9 @@ public class MyController {
 	protected List<Point> nodesPosition = null;
 	protected Point		  robotPosition	= null;
 	protected Point		   robotVecteur	= null;
+	protected EquationLine lineRobot = null;
 	
+	protected ArrayList<Tuple<EquationLine,Integer>> equationsLinesColors;
 	private ArrayList<TImedMotor> motors = new ArrayList<TImedMotor>();
 
 	public MyController(){
@@ -55,6 +61,8 @@ public class MyController {
 		server	   = new Server();
 		parser	   = new ParserPDDL4J();
 		nodesPosition = new ArrayList<Point>();
+		equationsLinesColors = new ArrayList<>();
+		
 		motors.add(propulsion);
 		motors.add(graber);
 	}
@@ -102,6 +110,112 @@ public class MyController {
 		cleanUp();
 	}
 
+	/**
+	 * Initialise les equations correspondant aux lignes du plateau à l'aide
+	 * de deux palets. La position des deux palets permettent de calculer une equation
+	 * de droite
+	 * 
+	 * @return True si la calibration c'est bien passé sinon False
+	 */
+	private boolean calibrateNodeEquationLine() {	
+		screen.drawText("Calibration", 
+				"Préparez deux palets à la ","calibration des lignes de couleurs",
+				"Appuyez sur le bouton central ","pour continuer");
+		
+		if(input.waitOkEscape(Button.ID_ENTER)){
+			color.lightOn();
+
+			//Calibration equation ligne blanche
+			screen.drawText("Placer deux palets","sur la ligne blanche","la plus proche de l'origine");
+			input.waitAny();
+			addEquationLineFromPalet(Color.WHITE);
+			
+			//calibration equation deuxième ligne blanche 
+			screen.drawText("Placer deux palets","sur la ligne blanche","la plus éloignée de l'origine");
+			input.waitAny();
+			addEquationLineFromPalet(Color.WHITE);
+			
+			//calibration equation ligne noir 
+			screen.drawText("Placer deux palets","sur la ligne noir","parallèle à l'axe des ordonnées");
+			input.waitAny();
+			addEquationLineFromPalet(Color.BLACK);
+			
+			//calibration equation deuxième ligne noir 
+			screen.drawText("Placer deux palets","sur la ligne noir","parallèle à l'axe des ordonnées");
+			input.waitAny();
+			addEquationLineFromPalet(Color.BLACK);
+			
+			//calibration equation ligne rouge 
+			screen.drawText("Placer deux palets","sur la ligne rouge");
+			input.waitAny();
+			addEquationLineFromPalet(Color.RED);
+			
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @author duvernet
+	 * Recupère les positions des deux palets et calcul l'equation de la droite.
+	 * Associe et stock l'equation avec la couleur en paramètre 
+	 * @param color La couleur de la ligne à calibrer
+	 */
+	private void addEquationLineFromPalet(int color) {
+		this.server = new Server();
+		List<Point> listPalets = server.run();
+		if(listPalets.size() !=2) {
+			System.out.println("Error bad number of palet on table");
+			return;
+		}
+		
+		Collections.sort(listPalets);   
+		Point p1 = listPalets.get(0);
+		Point p2 = listPalets.get(1);
+		EquationLine equation = new EquationLine(p1,p2);
+		equationsLinesColors.add(new Tuple<>(equation,new Integer(color)));
+		
+	}
+	
+	/**
+	 * Calcul de la nouvelle position du robot en fonction de l'equation de la droite de couleur
+	 * qu'il a croisé et de l'equation de sa propre droite. Si il croise une droite blanche alors
+	 * on détermine la quelle il a croisé à l'aide de son vecteur de direction. Même chose pour les
+	 * lignes noires
+	 * 
+	 * @author duvernet
+	 */ 
+	private void updatePositionRobotWithLine() {
+		int currentColor = color.getCurrentColor();
+		
+		switch (currentColor) {
+			// Le robot a croisé une des lignes 
+            case Color.WHITE:
+            	// Le robot était en direction de la ligne blanche la plus proche de l'origine
+                if(robotVecteur.getY() > 0) {
+                	if(equationsLinesColors.get(0).y == Color.WHITE) {
+                		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
+                		robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(0).x);
+                	}
+                }else {
+                	if(equationsLinesColors.get(1).y == Color.WHITE) {
+                		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
+                		robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(1).x);
+                	}
+                }
+            	break;
+            // Le robot à croisé la ligne rouge
+            case Color.RED:
+                if(equationsLinesColors.get(4).y == Color.RED) {
+                	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
+                	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(4).x);
+                }
+            	break;
+            default:          
+            	break;
+        }	
+	}
+		
 	private void calibrateNodePosition() {
 		this.server = new Server();
 		List<Point> tmp = server.run();
@@ -195,27 +309,9 @@ public class MyController {
 		System.out.println("Far point : "+far );
 		robotVecteur = new Point(far.getX() - this.robotPosition.getX(), far.getY() - this.robotPosition.getY());
 		System.out.println("VecteurRobot="+robotVecteur);
+		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
 	}
 	
-//	public static double angleBetweenPoints(Point a, Point b) {
-//        double angleA = angleFromOriginCounterClockwise(a);
-//        double angleB = angleFromOriginCounterClockwise(b);
-//        return Math.abs(angleA-angleB);
-//    }
-//
-//    public static double angleFromOriginCounterClockwise(Point a) {
-//        double degrees = Math.toDegrees(Math.atan(a.getY()/a.getX()));
-//        if(a.getX() < 0.0) return degrees+180.0;
-//        else if(a.getY() < 0.0) return degrees+360.0;
-//        else return degrees;
-//    }
-//
-//    public static void main(String[] args) {
-//        Point p1 = new Point(1, 100);
-//        Point p2 = new Point(-100, 1);
-//        System.out.println(angleBetweenPoints(p1, p2));
-//    }
-
 	private void runIA() {
 		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
 		while (!nodesWithPalet.isEmpty()){
@@ -269,13 +365,6 @@ public class MyController {
 		return degree;
 	}
 	
-//	private double angleCalculation(Point paletToGet) {
-//		Point northPoint = new Point(this.robotPosition.getX(), paletToGet.getY());
-//		double disRobotToNorth = Math.sqrt(Math.pow((northPoint.getX() - this.robotPosition.getX()), 2) + Math.pow((northPoint.getY() - this.robotPosition.getY()), 2));
-//		double disRobotToPalet = Math.sqrt(Math.pow((paletToGet.getX() - this.robotPosition.getX()), 2) + Math.pow((paletToGet.getY() - this.robotPosition.getY()), 2));
-//		return Math.toDegrees(Math.acos((disRobotToNorth/disRobotToPalet)));
-//	}
-
 	private char getNodeWithRobot() {
 		int robotX = this.robotPosition.getX();
 		int robotY = this.robotPosition.getY();
@@ -345,6 +434,8 @@ public class MyController {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
 			color.setCalibration((float[][])ois.readObject());
 			graber.setOpenTime((long)ois.readObject());
+			// /!\ Je sais pas si ça fonctionne !!
+			equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject(); 
 			ois.close();
 		}
 	}
@@ -368,6 +459,7 @@ public class MyController {
 			ObjectOutputStream str = new ObjectOutputStream(new FileOutputStream(file));
 			str.writeObject(color.getCalibration());
 			str.writeObject(graber.getOpenTime());
+			str.writeObject(equationsLinesColors);
 			str.flush();
 			str.close();
 		}
@@ -896,3 +988,32 @@ public class MyController {
 		return false;
 	}
 }
+//////////////////////////// CODE MORT ////////////////////////////////////////////////
+
+//	public static double angleBetweenPoints(Point a, Point b) {
+//        double angleA = angleFromOriginCounterClockwise(a);
+//        double angleB = angleFromOriginCounterClockwise(b);
+//        return Math.abs(angleA-angleB);
+//    }
+//
+//    public static double angleFromOriginCounterClockwise(Point a) {
+//        double degrees = Math.toDegrees(Math.atan(a.getY()/a.getX()));
+//        if(a.getX() < 0.0) return degrees+180.0;
+//        else if(a.getY() < 0.0) return degrees+360.0;
+//        else return degrees;
+//    }
+//
+//    public static void main(String[] args) {
+//        Point p1 = new Point(1, 100);
+//        Point p2 = new Point(-100, 1);
+//        System.out.println(angleBetweenPoints(p1, p2));
+//    }
+
+
+
+//	private double angleCalculation(Point paletToGet) {
+//		Point northPoint = new Point(this.robotPosition.getX(), paletToGet.getY());
+//		double disRobotToNorth = Math.sqrt(Math.pow((northPoint.getX() - this.robotPosition.getX()), 2) + Math.pow((northPoint.getY() - this.robotPosition.getY()), 2));
+//		double disRobotToPalet = Math.sqrt(Math.pow((paletToGet.getX() - this.robotPosition.getX()), 2) + Math.pow((paletToGet.getY() - this.robotPosition.getY()), 2));
+//		return Math.toDegrees(Math.acos((disRobotToNorth/disRobotToPalet)));
+//	}
