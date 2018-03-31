@@ -46,6 +46,7 @@ public class MyController {
 	protected Point		  robotPosition	= null;
 	protected Point		   robotVecteur	= null;
 	protected EquationLine lineRobot = null;
+	protected boolean		 top 		= false;
 	
 	protected ArrayList<Tuple<EquationLine,Integer>> equationsLinesColors;
 	private ArrayList<TImedMotor> motors = new ArrayList<TImedMotor>();
@@ -62,7 +63,9 @@ public class MyController {
 		parser	   = new ParserPDDL4J();
 		nodesPosition = new ArrayList<Point>();
 		equationsLinesColors = new ArrayList<>();
-		
+
+		top = false;
+
 		motors.add(propulsion);
 		motors.add(graber);
 	}
@@ -92,9 +95,11 @@ public class MyController {
 			screen.drawText("Lancer", 
 					"Mettre un palet sur","le robot","OK si haut autre", "si bas");
 			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-				calibrateRobotPositionAndVector(true);
+				this.top = true;
+				calibrateRobotPositionAndVector();
 			}else{
-				calibrateRobotPositionAndVector(false);
+				this.top = false;
+				calibrateRobotPositionAndVector();
 			}
 			screen.drawText("Lancer", 
 					"Ok pour run");
@@ -268,7 +273,7 @@ public class MyController {
 			System.out.println(node);
 	}
 	
-	private void calibrateRobotPositionAndVector(boolean top) {
+	private void calibrateRobotPositionAndVector() {
 		this.server = new Server();
 		List<Point> tmp = server.run();
 		Collections.sort(tmp);
@@ -312,6 +317,49 @@ public class MyController {
 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
 	}
 	
+//	public static double angleBetweenPoints(Point a, Point b) {
+//        double angleA = angleFromOriginCounterClockwise(a);
+//        double angleB = angleFromOriginCounterClockwise(b);
+//        return Math.abs(angleA-angleB);
+//    }
+//
+//    public static double angleFromOriginCounterClockwise(Point a) {
+//        double degrees = Math.toDegrees(Math.atan(a.getY()/a.getX()));
+//        if(a.getX() < 0.0) return degrees+180.0;
+//        else if(a.getY() < 0.0) return degrees+360.0;
+//        else return degrees;
+//    }
+//
+//    public static void main(String[] args) {
+//        Point p1 = new Point(1, 100);
+//        Point p2 = new Point(-100, 1);
+//        System.out.println(angleBetweenPoints(p1, p2));
+//    }
+	
+	/*private void runIAPDDL() {
+		
+		List<String> moveToDo;
+		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
+		while (!nodesWithPalet.isEmpty()){
+			
+			// calcul node robot
+			char nodeRobot = '0';
+			parser.parse(nodesWithPalet, nodeRobot, true);
+			try {
+				moveToDo = parser.runProblem();
+				
+				
+			} catch (IOException e) {
+				System.err.println("Erreur lors du run problem");
+				e.printStackTrace();
+			}
+			
+			
+			nodesWithPalet = getNodesWithPalet(server.run());
+		}
+		
+	}*/
+
 	private void runIA() {
 		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
 		while (!nodesWithPalet.isEmpty()){
@@ -319,7 +367,7 @@ public class MyController {
 			parser.parse(nodesWithPaletCloseFromRobot, getNodeWithRobot(), true);
 			
 			//On récupère les actions à effectué !
-			Point paletToGet = nodesPosition.get(0);
+			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
 			System.out.println("Palet to get : "+paletToGet);
 			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
@@ -346,9 +394,44 @@ public class MyController {
 					return;
 			}
 			propulsion.stopMoving();
-			propulsion.orientateNorth();
 			graber.close();
-						
+			while (graber.isRunning()){
+				graber.checkState();
+			}
+			
+			robotPosition = paletToGet;
+			robotVecteur = vRobPal;
+			
+			Point toHome = new Point(robotPosition.getX(), top ? robotPosition.getY() - 20 : robotPosition.getY() + 20);
+			System.out.println("Palet to get : "+paletToGet);
+			Point vRobHome = new Point(toHome.getX() - this.robotPosition.getX(), toHome.getY() - this.robotPosition.getY());
+			angleToRotate = angleCalculation(toHome);
+			zproduct = (vRobHome.getX() * robotVecteur.getY()) - (vRobHome.getY() * robotVecteur.getX());
+			dotProd = (vRobHome.getX() * robotVecteur.getX()) + (vRobHome.getY() * robotVecteur.getY());
+			turnLeft = (zproduct * dotProd) < 0;
+			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
+			angleToRotate = Math.abs(angleToRotate);
+			System.out.println("Turn Left = "+turnLeft);
+			
+			propulsion.rotate((float)angleToRotate, turnLeft, false);
+			while(propulsion.isRunning()){
+				propulsion.checkState();
+				if(input.escapePressed())
+					return;
+			}
+			propulsion.run(true);
+			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
+				propulsion.checkState();
+				if(input.escapePressed())
+					return;
+			}
+			propulsion.stopMoving();
+			graber.open();
+			while (graber.isRunning()){
+				graber.checkState();
+			}
+			propulsion.runFor(500, false);
+			nodesWithPalet = getNodesWithPalet(server.run());
 		}
 	}
 
