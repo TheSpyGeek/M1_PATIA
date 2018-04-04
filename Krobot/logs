@@ -1,0 +1,159 @@
+Program finished
+Executing jrun -cp /home/lejos/programs/Krobot.jar lejos.internal.ev3.EV3Wrapper TestRobot in /home/lejos/programs
+Start searching
+{206, 2}
+{-13, 4}
+Finished
+Start searching
+{198, 251}
+{-5, 250}
+Finished
+Start searching
+{148, 251}
+{153, 6}
+Finished
+Start searching
+{97, 193}
+{148, 191}
+{42, 191}
+{97, 129}
+{42, 129}
+{153, 127}
+{155, 59}
+{95, 58}
+{40, 58}
+Finished
+Start searching
+{95, 268}
+{97, 193}
+{148, 191}
+{97, 129}
+{42, 129}
+{153, 127}
+{155, 59}
+{95, 58}
+{40, 58}
+Finished
+Start searching
+{97, 193}
+{148, 191}
+{42, 191}
+{97, 129}
+{42, 129}
+{153, 127}
+{155, 59}
+{95, 58}
+{40, 58}
+Finished
+Palet NOT In camp :{97, 193}
+Palet NOT In camp :{148, 191}
+Palet NOT In camp :{42, 191}
+Palet NOT In camp :{97, 129}
+Palet NOT In camp :{42, 129}
+Palet NOT In camp :{153, 127}
+Palet NOT In camp :{155, 59}
+Palet NOT In camp :{95, 58}
+Palet NOT In camp :{40, 58}
+(define (problem ROBOTPARTY) (:domain KROBOT)
+	(:objects A B C D E F G H I J K L - node P0 P1 P2 P3 P4 - palet)
+	(:init
+		(robotFree)
+		(paletOnNode P0 A)
+		(paletOnNode P1 B)
+		(paletOnNode P2 C)
+		(paletOnNode P3 D)
+		(paletOnNode P4 E)
+		(robotOnNode I)
+		(connected A B)
+		(connected A D)
+		(connected B C)
+		(connected B E)
+		(connected C F)
+		(connected D E)
+		(connected D G)
+		(connected E F)
+		(connected E H)
+		(connected F I)
+		(connected G H)
+		(connected G J)
+		(connected H I)
+		(connected H K)
+		(connected I L)
+		(connected J K)
+		(connected K L)
+		(nodeInCamp A)
+		(nodeInCamp B)
+		(nodeInCamp C)
+	)
+	(:goal
+		(and
+			(paletInCamp P0)
+			(paletInCamp P1)
+			(paletInCamp P2)
+			(paletInCamp P3)
+			(paletInCamp P4)
+		)
+	)
+)
+Palet to get : {148, 191}
+Start searching
+{97, 193}
+{42, 191}
+{97, 129}
+{42, 129}
+{161, 111}
+{95, 58}
+{40, 58}
+{177, 16}
+Finished
+Palet NOT In camp :{97, 193}
+Palet NOT In camp :{42, 191}
+Palet NOT In camp :{97, 129}
+Palet NOT In camp :{42, 129}
+Palet NOT In camp :{161, 111}
+Palet NOT In camp :{95, 58}
+Palet NOT In camp :{40, 58}
+Palet NOT In camp :{177, 16}
+(define (problem ROBOTPARTY) (:domain KROBOT)
+	(:objects A B C D E F G H I J K L - node P0 P1 P2 P3 P4 - palet)
+	(:init
+		(robotFree)
+		(paletOnNode P0 A)
+		(paletOnNode P1 B)
+		(paletOnNode P2 C)
+		(paletOnNode P3 D)
+		(paletOnNode P4 E)
+		(robotOnNode I)
+		(connected A B)
+		(connected A D)
+		(connected B C)
+		(connected B E)
+		(connected C F)
+		(connected D E)
+		(connected D G)
+		(connected E F)
+		(connected E H)
+		(connected F I)
+		(connected G H)
+		(connected G J)
+		(connected H I)
+		(connected H K)
+		(connected I L)
+		(connected J K)
+		(connected K L)
+		(nodeInCamp A)
+		(nodeInCamp B)
+		(nodeInCamp C)
+	)
+	(:goal
+		(and
+			(paletInCamp P0)
+			(paletInCamp P1)
+			(paletInCamp P2)
+			(paletInCamp P3)
+			(paletInCamp P4)
+		)
+	)
+)
+Palet to get : {148, 191}
+Program finished
