@@ -4,23 +4,33 @@ import utils.EquationLine;
 public class TestEquationLine {
 
 	public static void main(String args []) {
-		Point p1 = new Point(1,1);
-		Point p2 = new Point(3,2);
+		Point p1 = new Point(200,2);
+		Point p2 = new Point(-13,4);
 		
+		Point p3 = new Point(95, 252);
+		Point p4 = new Point(95, 0);
+		
+				
+		Point p5 = new Point(204,127);
+		Point p6 = new Point(-11,127);
+		
+		Point p7 = new Point(148, 252);
+		Point p8 = new Point(153, 2);
+
 		EquationLine e1 = new EquationLine(p1,p2);
-		System.out.println(e1.getA()+" "+e1.getB());
-		
-		Point pt1 = new Point(-1,1);
-		Point pt2 = new Point(-3,2);
-		
-		EquationLine e2 = new EquationLine(pt1,pt2);
-		System.out.println(e2.getA()+" "+e2.getB());
+		e1.printEquationParameters();
+		EquationLine e2 = new EquationLine(p3,p4);
+		e2.printEquationParameters();
+		EquationLine e3 = new EquationLine(p5,p6);
+		e3.printEquationParameters();
+		EquationLine e4 = new EquationLine(p7,p8);
+		e4.printEquationParameters();
 		
 		Point e = e1.IntersectionWithEquation(e2);
 		System.out.println(e.getX()+" "+e.getY());
 		
 		Point v = new Point(2,1);
-		EquationLine e3 = new EquationLine(p1,v,true);
-		System.out.println(e3.getA()+" "+e3.getB());
+		EquationLine e5 = new EquationLine(p1,v,true);
+		System.out.println(e5.getA()+" "+e5.getB());
 	}
 }

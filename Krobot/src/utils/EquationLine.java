@@ -95,4 +95,9 @@ public class EquationLine {
 	public void setB(double b) {
 		this.b = b;
 	}
+	
+	public void printEquationParameters() {
+		System.out.println("Coefficiant directeur:"+this.a);
+		System.out.println("Ordonnée à l'origine:"+this.b);
+	}
 }

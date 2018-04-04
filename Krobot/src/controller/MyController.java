@@ -88,6 +88,10 @@ public class MyController {
 			if(!skip){
 				saveCalibration();
 			}
+			calibrateNodeEquationLine();
+			screen.drawText("Fin de la calibration des lignes");
+			input.waitAny();
+			
 			screen.drawText("Lancer", 
 				"Appuyez sur OK si la","ligne noire est à gauche",
 				"Appuyez sur tout autre", "elle est à droite");
@@ -141,14 +145,14 @@ public class MyController {
 			addEquationLineFromPalet(Color.WHITE);
 			
 			//calibration equation ligne noir 
-			screen.drawText("Placer deux palets","sur la ligne noir","parallèle à l'axe des ordonnées");
+	/*		screen.drawText("Placer deux palets","sur la ligne noir","parallèle à","l'axe des ordonnées");
 			input.waitAny();
 			addEquationLineFromPalet(Color.BLACK);
 			
 			//calibration equation deuxième ligne noir 
-			screen.drawText("Placer deux palets","sur la ligne noir","parallèle à l'axe des ordonnées");
+			screen.drawText("Placer deux palets","sur la ligne noir","perpandiculaire à"," l'axe des ordonnées");
 			input.waitAny();
-			addEquationLineFromPalet(Color.BLACK);
+			addEquationLineFromPalet(Color.BLACK);*/
 			
 			//calibration equation ligne rouge 
 			screen.drawText("Placer deux palets","sur la ligne rouge");
@@ -179,7 +183,7 @@ public class MyController {
 		Point p2 = listPalets.get(1);
 		EquationLine equation = new EquationLine(p1,p2);
 		equationsLinesColors.add(new Tuple<>(equation,new Integer(color)));
-		
+		equation.printEquationParameters();
 	}
 	
 	/**
@@ -518,7 +522,7 @@ public class MyController {
 			color.setCalibration((float[][])ois.readObject());
 			graber.setOpenTime((long)ois.readObject());
 			// /!\ Je sais pas si ça fonctionne !!
-			equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject(); 
+			//equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject(); 
 			ois.close();
 		}
 	}
