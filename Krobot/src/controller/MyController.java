@@ -198,27 +198,30 @@ public class MyController {
 		switch (currentColor) {
 			// Le robot a croisé une des lignes 
             case Color.WHITE:
+            	System.out.print("Ligne blanche: ");
             	// Le robot était en direction de la ligne blanche la plus proche de l'origine
                 if(robotVecteur.getY() > 0) {
                 	if(equationsLinesColors.get(0).y == Color.WHITE) {
                 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 		robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(0).x);
-                		System.out.println("Ligne blanche : "+robotPosition.getX()+" "+robotPosition.getY());
+                		System.out.println(robotPosition.getX()+" "+robotPosition.getY());
                 	}
                 }else {
                 	if(equationsLinesColors.get(1).y == Color.WHITE) {
                 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 		robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(1).x);
-                		System.out.println("Ligne blanche 2 : "+robotPosition.getX()+" "+robotPosition.getY());
+                		System.out.println(" 2 "+robotPosition.getX()+" "+robotPosition.getY());
                 	}
                 }
             	break;
             // Le robot à croisé la ligne rouge
             case Color.RED:
+            	System.out.print("Ligne red: ");
+
                 if(equationsLinesColors.get(2).y == Color.RED) {
                 	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(4).x);
-                	System.out.println("Ligne rouge : "+robotPosition.getX()+" "+robotPosition.getY());
+                	System.out.println(robotPosition.getX()+" "+robotPosition.getY());
                 }
             	break;
             default:          
