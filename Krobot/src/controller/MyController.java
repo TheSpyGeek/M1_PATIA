@@ -194,7 +194,7 @@ public class MyController {
 	 */ 
 	private void updatePositionRobotWithLine() {
 		int currentColor = color.getCurrentColor();
-		
+		System.out.println("Get la couleur"+currentColor);
 		switch (currentColor) {
 			// Le robot a croisé une des lignes 
             case Color.WHITE:

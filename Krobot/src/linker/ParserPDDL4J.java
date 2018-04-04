@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -86,7 +85,7 @@ public class ParserPDDL4J {
         	
         	System.out.println("Plan:");
     		for(String s: plan) {
-    			System.out.println(s);
+    			System.err.println(s);
     		}
         }
 		
