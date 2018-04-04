@@ -234,9 +234,9 @@ public class MyController {
 			return;
 		}
 		Collections.sort(tmp);
-		System.out.println("Point triées :");
-		for(Point p : tmp)
-			System.out.println(p);
+//		System.out.println("Point triées :");
+//		for(Point p : tmp)
+//			System.out.println(p);
 		for(int i=0; i<3; i++){
 			Point a = tmp.get(i*3);
 			Point b = tmp.get(i*3+1);
@@ -273,16 +273,16 @@ public class MyController {
 				}
 			}
 		}
-		System.out.println("Nodes : ");
-		for(Point node : this.nodesPosition)
-			System.out.println(node);
+//		System.out.println("Nodes : ");
+//		for(Point node : this.nodesPosition)
+//			System.out.println(node);
 	}
 	
 	private void calibrateRobotPositionAndVector() {
 		this.server = new Server();
 		List<Point> tmp = server.run();
 		Collections.sort(tmp);
-		System.out.println("Sorted palet :");
+//		System.out.println("Sorted palet :");
 		this.robotPosition = tmp.get(0);
 		for (Point p : tmp) {
 			if(top && this.robotPosition.getY() < p.getY()) {
@@ -290,11 +290,11 @@ public class MyController {
 			} else if(!top && this.robotPosition.getY() > p.getY()) {
 				this.robotPosition = p;
 			}
-			System.out.println(p);
+//			System.out.println(p);
 		}
 			
 		//this.robotPosition = tmp.get(top ? 0 : tmp.size()-1);
-		System.out.println("RobotPosition : "+this.robotPosition);
+//		System.out.println("RobotPosition : "+this.robotPosition);
 		Point far;
 		Point far1 = nodesPosition.get(2);
 		Point far2 = nodesPosition.get(5);
@@ -304,7 +304,7 @@ public class MyController {
 			far2 = nodesPosition.get(3);
 			far3 = nodesPosition.get(6);
 		}
-		System.out.println(far1 + " " + far2 + " " + far3);
+//		System.out.println(far1 + " " + far2 + " " + far3);
 		if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far2.getX()-robotPosition.getX())){
 			if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
 				far = far1;
@@ -316,9 +316,9 @@ public class MyController {
 		} else {
 			far = far3;
 		}
-		System.out.println("Far point : "+far );
+//		System.out.println("Far point : "+far );
 		robotVecteur = new Point(far.getX() - this.robotPosition.getX(), far.getY() - this.robotPosition.getY());
-		System.out.println("VecteurRobot="+robotVecteur);
+//		System.out.println("VecteurRobot="+robotVecteur);
 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
 	}
 	
@@ -373,15 +373,15 @@ public class MyController {
 			
 			//On récupère les actions à effectué !
 			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
-			System.out.println("Palet to get : "+paletToGet);
+//			System.out.println("Palet to get : "+paletToGet);
 			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
 			double zproduct = (vRobPal.getX() * robotVecteur.getY()) - (vRobPal.getY() * robotVecteur.getX());
 			double dotProd = (vRobPal.getX() * robotVecteur.getX()) + (vRobPal.getY() * robotVecteur.getY());
 			boolean turnLeft = (zproduct * dotProd) < 0;
-			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
+//			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
 			angleToRotate = Math.abs(angleToRotate);
-			System.out.println("Turn Left = "+turnLeft);
+//			System.out.println("Turn Left = "+turnLeft);
 			
 			propulsion.rotate((float)angleToRotate, turnLeft, false);
 			if(graber.isClose())
@@ -414,9 +414,9 @@ public class MyController {
 			zproduct = (vRobHome.getX() * robotVecteur.getY()) - (vRobHome.getY() * robotVecteur.getX());
 			dotProd = (vRobHome.getX() * robotVecteur.getX()) + (vRobHome.getY() * robotVecteur.getY());
 			turnLeft = (zproduct * dotProd) < 0;
-			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
+//			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
 			angleToRotate = Math.abs(angleToRotate);
-			System.out.println("Turn Left = "+turnLeft);
+//			System.out.println("Turn Left = "+turnLeft);
 			
 			propulsion.rotate((float)angleToRotate, turnLeft, false);
 			while(propulsion.isRunning()){
@@ -432,11 +432,16 @@ public class MyController {
 			}
 			propulsion.stopMoving();
 			graber.open();
-			propulsion.runFor(500, true);
+			propulsion.runFor(100, true);
 			while (graber.isRunning()){
 				graber.checkState();
 			}
-			propulsion.runFor(500, false);
+			propulsion.runFor(1000, false);
+			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
+				propulsion.checkState();
+			}
+			propulsion.stopMoving();
+			
 			robotVecteur = vRobHome;
 			updatePositionRobotWithLine();
 			nodesWithPalet = getNodesWithPalet(server.run());
@@ -444,7 +449,7 @@ public class MyController {
 	}
 
 	private double angleCalculation(Point paletToGet) {
-		System.out.println("PaletToGet" + paletToGet);
+//		System.out.println("PaletToGet" + paletToGet);
 		Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 		double normRabPal = Math.sqrt(Math.pow(vRobPal.getX(), 2) + Math.pow(vRobPal.getY(), 2));
 		double normRobVec = Math.sqrt(Math.pow(robotVecteur.getX(), 2) + Math.pow(robotVecteur.getY(), 2));
@@ -452,7 +457,7 @@ public class MyController {
 		if ((robotVecteur.getX()*-vRobPal.getY()) - robotVecteur.getY()*vRobPal.getX() < 0){
 			degree = - degree;
 		}
-		System.out.println("Degree to turn = "+degree);
+//		System.out.println("Degree to turn = "+degree);
 		return degree;
 	}
 	
@@ -479,7 +484,7 @@ public class MyController {
 			int paletY = palet.getY();
 			int delta = 1000;
 			int index = -1;
-			if (paletX > R2D2Constants.XPOSITION_LINE_CAMP_1 && paletX < R2D2Constants.XPOSITION_LINE_CAMP_2){
+			if (!paletIsInCamp(palet)){
 				for(int i=0; i<this.nodesPosition.size(); i++){
 					Point p = this.nodesPosition.get(i);
 					int tmpDelta = Math.abs(paletX - p.getX()) + Math.abs(paletY - p.getY());
@@ -494,6 +499,10 @@ public class MyController {
 		return nodesWithPalet;
 	}
 	
+	private boolean paletIsInCamp(Point palet) {
+		return equationsLinesColors.get(0).y == Color.WHITE && equationsLinesColors.get(1).y == Color.WHITE && (!equationsLinesColors.get(0).x.pointIsAbove(palet) || equationsLinesColors.get(1).x.pointIsAbove(palet)));
+	}
+
 	private List<Integer> getNodesWithPaletCloseFromRobot(List<Integer> nodesWithPalet, int nbNodes) {
 		List<Integer> nodesWithPaletCloseFromRobot = new ArrayList<Integer>();
 		Integer[] deltaForClosestNodes = new Integer[nodesWithPalet.size()];
@@ -578,413 +587,6 @@ public class MyController {
 	 */
 	private void runTests() {
 //		SystemTest.grabberTest(this);
-	}
-
-	/**
-	 * Lance la boucle de jeu principale
-	 * 
-	 * Toutes les opérations dans la boucle principale doivent être le plus
-	 * atomique possible.
-	 * Cette boucle doit s'executer très rapidement.
-	 */
-	enum States {
-		firstMove,
-		step2,
-		step22,
-		playStart,
-		isCatching,
-		needToRelease,
-		isReleasing,
-		needToSeek,
-		isSeeking,
-		needToGrab,
-		isGrabing,
-		needToRotateEast,
-		isRotatingToEast,
-		needToRotateWest,
-		isRotatingToWest,
-		needToGoBackHome,
-		isRunningBackHome,
-		needToResetInitialSeekOrientation,
-		isResetingInitialSeekOrientation,
-		needToTurnBackToGoBackHome,
-		isTurningBackToGoBackHome,
-		needToOrientateNorthToRelease,
-		isOrientatingNorthToRealease,
-		isAjustingBackHome,
-		isGoingToOrientateN}
-	private void mainLoop(boolean initLeft) {
-		States state          = States.firstMove;
-		boolean run           = true;
-		boolean unique        = true;
-		boolean unique2       = true;
-		float   searchPik     = R2D2Constants.INIT_SEARCH_PIK_VALUE;
-		boolean isAtWhiteLine = false;
-		int     nbSeek        = R2D2Constants.INIT_NB_SEEK;
-		boolean seekLeft      = initLeft;
-		//Boucle de jeu
-		while(run){
-			/*
-			 * - Quand on part chercher un palet, on mesure le temps de trajet
-			 * - Quand on fait le demi tour on parcours ce même temps de trajet
-			 * - Si on croise une ligne noire vers la fin du temps de trajet
-			 *     S'orienter au nord
-			 *     vérifier pendant l'orientation la présence d'une ligne blanche
-			 *     si on voit une ligne blanche alors le prochain état sera 
-			 *     arrivé à la maison
-			 *     sinon le prochain état sera aller à la maison.
-			 */
-			try{
-				for(TImedMotor m : motors){
-					m.checkState();
-				}
-				switch (state) {
-				/*
-				 * Routine de démarrage du robot :
-				 *    Attraper un palet
-				 *    Emmener le palet dans le but adverse les roues à cheval
-				 *    sur la ligne noire.
-				 *    Et passer dans l'état needToResetInitialSeekOrientation
-				 */
-				case firstMove :
-					propulsion.run(true);
-					state = States.playStart;
-					break;
-				case playStart:
-					while(propulsion.isRunning()){
-						if(pression.isPressed()){
-							propulsion.stopMoving();
-							graber.close();
-						}
-					}
-					propulsion.rotate(R2D2Constants.ANGLE_START, seekLeft, false);
-					while(propulsion.isRunning() || graber.isRunning()){
-						propulsion.checkState();
-						graber.checkState();
-						if(input.escapePressed())
-							return;
-					}
-					propulsion.run(true);
-					while(propulsion.isRunning()){
-						propulsion.checkState();
-						if(input.escapePressed())
-							return;
-						if(color.getCurrentColor() == Color.WHITE){
-							propulsion.stopMoving();
-						}
-					}
-					graber.open();
-					while(graber.isRunning()){
-						graber.checkState();
-						if(input.escapePressed())
-							return;
-					}
-					propulsion.runFor(R2D2Constants.QUARTER_SECOND, false);
-					while(propulsion.isRunning()){
-						propulsion.checkState();
-						if(input.escapePressed())
-							return;
-					}
-					propulsion.halfTurn(seekLeft);
-					while(propulsion.isRunning()){
-						propulsion.checkState();
-						if(input.escapePressed())
-							return;
-					}
-					propulsion.run(true);
-					while(propulsion.isRunning()){
-						propulsion.checkState();
-						if(input.escapePressed())
-							return;
-						if(color.getCurrentColor() == Color.BLACK){
-							propulsion.stopMoving();
-						}
-					}
-					/*
-					propulsion.orientateSouth(seekLeft);
-					while(propulsion.isRunning()){
-						propulsion.checkState();
-						if(input.escapePressed())
-							return;
-					}
-					state = States.needToGrab;
-					*/
-					state = States.needToSeek;
-				break;
-				/*
-				 * Le bsoin de chercher un objet nécessite d'avoir le robot
-				 * orienté face à l'ouest du terrain. Le nord étant face au camp
-				 * adverse
-				 * Le robot va lancer une rotation de 180° en cherchant si un
-				 * pic de distances inférieure à 70cm apparait.
-				 * Dans ce cas, il fera une recherche du centre de l'objet et
-				 * ira l'attraper
-				 *
-				 * TODO faire en sorte que le robot n'avance pas pour une durée
-				 * indeterminée, mais qu'il avance sur un temps de référence
-				 * pour 70 cm de trajet au maximum. Comme ça, si l'objet a été
-				 * attrapé pendant ce temps ou à disparu, alors il ne roulera
-				 * pas dans le vide pour rien
-				 */
-				case needToSeek:
-					state = States.isSeeking;
-					searchPik   = R2D2Constants.INIT_SEARCH_PIK_VALUE;
-					propulsion.volteFace(seekLeft, R2D2Constants.SEARCH_SPEED);
-					isAtWhiteLine = false;
-					break;
-				case isSeeking:
-					float newDist = vision.getRaw()[0];
-					//Si la nouvelle distance est inférieure au rayonMaximum et
-					//et supérieure au rayon minimum alors
-					//on a trouvé un objet à rammaser.
-					if(newDist < R2D2Constants.MAX_VISION_RANGE
-					   && newDist >= R2D2Constants.MIN_VISION_RANGE){
-						if(searchPik == R2D2Constants.INIT_SEARCH_PIK_VALUE){
-							if(unique2){
-								unique2 = false;
-							}else{
-								propulsion.stopMoving();
-								//TODO, ces 90° peuvent poser problème.
-								//Genre, dans le cas où le dernier palet de la recherche
-								//a déclenché la recherche du searchPik,
-								//du coup on risque de voir le mur.
-								//Il serait plus intéressant de faire un rotate
-								//west ou east en fonction.
-								//Mais bon, on a jamais eu le bug alors ...
-								propulsion.rotate(R2D2Constants.QUART_CIRCLE, 
-								                  seekLeft, 
-								                  R2D2Constants.SLOW_SEARCH_SPEED);
-								searchPik = newDist;
-							}
-						}else{
-							if(newDist <= searchPik){
-								searchPik = newDist;
-							}else{
-								propulsion.stopMoving();
-								unique2 = true;
-								state = States.needToGrab;
-							}
-						}
-					}else{
-						searchPik = R2D2Constants.INIT_SEARCH_PIK_VALUE;
-					}
-					if(!propulsion.isRunning() && state != States.needToGrab){
-						nbSeek   += R2D2Constants.STEPS_PER_STAGE;
-						if(nbSeek > 10){
-							run = false;
-						}
-						state    = States.needToOrientateNorthToRelease;
-						seekLeft = System.currentTimeMillis() % 2 == 0;
-					}
-					break;
-				/*
-				 * Le besoin d'attraper un objet correspond au besoin de rouler
-				 * sur l'objet pour l'attraper dans les pinces.
-				 */
-				case needToGrab:
-					propulsion.runFor(R2D2Constants.MAX_GRABING_TIME, true);
-					state    = States.isGrabing;
-					seekLeft = !seekLeft;
-					break;
-				/*
-				 * Le robot est dans l'état isGrabing tant qu'il roule pour
-				 * attraper l'objet.
-				 */
-				case isGrabing:
-					//si le temps de roulage est dépassé, s'arrêter aussi
-					if(vision.getRaw()[0] < R2D2Constants.COLLISION_DISTANCE ||
-					   pression.isPressed()                                  ||
-					   !propulsion.isRunning()){
-						propulsion.stopMoving();
-						state = States.isCatching;
-						graber.close();
-					}
-					break;
-				/*
-				 * Is catching correspond à l'état où le robot est en train
-				 * d'attraper l'objet.
-				 * Cet état s'arrête quand les pinces arrêtent de tourner, temps
-				 * fonction de la calibration
-				 */
-				case isCatching:
-					if(!graber.isRunning()){
-						state = States.needToTurnBackToGoBackHome;
-					}
-					break;
-				/*
-				 * Ce état demande au robot de rentrer avec un palet.
-				 * Dans un premier temps il effectue un demi tour pour repartir
-				 * sur la trajectoire d'où il viens
-				 */
-				case needToTurnBackToGoBackHome:
-					propulsion.volteFace(true, R2D2Constants.VOLTE_FACE_ROTATION);
-					state = States.isTurningBackToGoBackHome;
-					break;
-				case isTurningBackToGoBackHome:
-					if(!propulsion.isRunning()){
-						state = States.needToGoBackHome;
-					}
-					break;
-				/*
-				 * Dans un second temps, le robot va aller en ligne droite pour
-				 * rentrer.
-				 * Le temps de trajet aller a été mesuré. Nous utilisons cette
-				 * mesure pour "prédire" à peux prêt quand est-ce que le robot
-				 * va arriver à destination.
-				 * Nous allumerons les capteurs de couleurs dans les environs
-				 * pour détecter la présence d'une ligne blanche ou d'une ligne
-				 * noire et agir en conséquence.
-				 *
-				 * Si une ligne noire est détectée, alors le robot va s'orienter
-				 * face au nord et continuer sa route en direction du camp
-				 * adverse.
-				 *
-				 * Celà permet d'assurer que le robot restera au centre du
-				 * terrain.
-				 *
-				 * Si une ligne blanche est détectée, alors le robot sait qu'il
-				 * est arrivé et l'état isRunningBackHome sera évacué
-				 */
-				case needToGoBackHome:
-					propulsion.run(true);
-					state = States.isRunningBackHome;
-					break;
-				case isRunningBackHome:
-					if(!propulsion.isRunning()){
-						state = States.needToOrientateNorthToRelease;
-					}
-					if(propulsion.hasRunXPercentOfLastRun(R2D2Constants.ACTIVATE_SENSOR_AT_PERCENT)){
-						if(color.getCurrentColor() == Color.WHITE){
-							propulsion.stopMoving();
-							isAtWhiteLine = true;
-							unique        = true;
-						}
-						if(unique && color.getCurrentColor() == Color.BLACK){
-							propulsion.stopMoving();
-							unique = false;
-							state  = States.isAjustingBackHome;
-						}
-					}
-					break;
-				/*
-				 * Cet état permet de remettre le robot dans la direction du
-				 * nord avant de reprendre sa route
-				 */
-				case isAjustingBackHome:
-					if(!propulsion.isRunning()){
-						propulsion.orientateNorth();
-						state = States.isGoingToOrientateN;
-					}
-					break;
-				/*
-				 * Cet état correspond à l'orientation du robot face au camp
-				 * adverse pour continuer sa route.
-				 *
-				 * Il y a cependant un cas particulier, dans le cas où quand le
-				 * robot tourne, si il voit la couleur blanche, c'est qu'il est
-				 * arrivé. Dans ce cas, terminer la rotation dans l'état
-				 * isOrientatingNorthToRealease.
-				 */
-				case isGoingToOrientateN:
-					if(color.getCurrentColor() == Color.WHITE){
-						state = States.isOrientatingNorthToRealease;
-					}
-					if(!propulsion.isRunning()){
-						state = States.needToGoBackHome;
-					}
-					break;
-				/*
-				 * Correspond à l'état où le robot s'oriente au nord pour
-				 * relâcher l'objet
-				 */
-				case needToOrientateNorthToRelease:
-					state = States.isOrientatingNorthToRealease;
-					propulsion.orientateNorth();
-					break;
-				case isOrientatingNorthToRealease:
-					if(!propulsion.isRunning()){
-						if(graber.isClose()){
-							state = States.needToRelease;
-						}else{
-							state = States.needToResetInitialSeekOrientation;
-						}
-					}
-					break;
-				/*
-				 * Ce état correspond, au moment où le robot a besoin de déposer
-				 * le palet dans le cap adverse.
-				 */
-				case needToRelease:
-					graber.open();
-					state = States.isReleasing;
-					break;
-				case isReleasing:
-					if(!graber.isRunning()){
-						state = States.needToResetInitialSeekOrientation;
-					}
-					break;
-				/*
-				 * Une fois l'objet rammassé, il faut se remettre en position de
-				 * trouver un autre objet.
-				 * Le robot fait une marcher arrière d'un certain temps.
-				 * Puis fera une mise en face de l'ouest
-				 */
-				case needToResetInitialSeekOrientation:
-					state = States.isResetingInitialSeekOrientation;
-					if(isAtWhiteLine){
-						propulsion.runFor(R2D2Constants.HALF_SECOND*nbSeek, false);
-					}else{
-						propulsion.runFor(R2D2Constants.EMPTY_HANDED_STEP_FORWARD, false);
-					}
-					break;
-				case isResetingInitialSeekOrientation:
-					if(!propulsion.isRunning()){
-						if(seekLeft){
-							state = States.needToRotateWest;
-						} else {
-							state = States.needToRotateEast;
-						}
-						if(color.getCurrentColor()== Color.WHITE)//fin de partie
-							return;
-					}
-					break;
-				/*
-				 * Remet le robot face à l'ouest pour recommencer la recherche.
-				 * Le robot doit avoir suffisamment reculé pour être dans une
-				 * zone où il y aura des palets à ramasser.
-				 */
-				case needToRotateWest:
-					propulsion.orientateWest();
-					state = States.isRotatingToWest;
-					break;
-				case isRotatingToWest:
-					if(!propulsion.isRunning()){
-						state = States.needToSeek;
-					}
-					break;
-				/*
-				 * Remet le robot face à l'est pour recommencer la recherche.
-				 * Le robot doit avoir suffisamment reculé pour être dans une
-				 * zone où il y aura des palets à ramasser.
-				 */
-				case needToRotateEast:
-					propulsion.orientateEast();
-					state = States.isRotatingToWest;
-					break;
-				case isRotatingToEast:
-					if(!propulsion.isRunning()){
-						state = States.needToSeek;
-					}
-					break;
-				//Évite la boucle infinie
-				}
-				if(input.escapePressed())
-					run = false;
-			}catch(Throwable t){
-				t.printStackTrace();
-				run = false;
-			}
-		}
 	}
 
 	/**
