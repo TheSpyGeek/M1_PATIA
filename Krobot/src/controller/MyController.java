@@ -483,11 +483,11 @@ public class MyController {
 		return (char) (index+65);
 	}
 
-	private List<Point> getPaletNotInCamp(List<Point> paletsPosition) {
+	private List<Point> getPaletNotInCamp(List<Point> paletsPositions) {
 		List<Point> paletNotInCamp = new ArrayList<Point>();
-		for(Point palet : paletsPosition){
+		for(Point palet : paletsPositions){
 			if (!paletIsInCamp(palet)){
-				paletsPosition.add(palet);
+				paletNotInCamp.add(palet);
 				System.out.println("Palet NOT In camp :"+palet);
 			} else {
 				System.out.println("Palet In camp :"+palet);
@@ -496,30 +496,30 @@ public class MyController {
 		return paletNotInCamp;
 	}
 	
-	private List<Integer> getNodesWithPalet(List<Point> paletsPosition) {
-		List<Integer> nodesWithPalet = new ArrayList<Integer>();
-		for(Point palet : paletsPosition){
-			int paletX = palet.getX();
-			int paletY = palet.getY();
-			int delta = 1000;
-			int index = -1;
-			if (!paletIsInCamp(palet)){
-				System.out.println("Palet NOT In camp :"+palet);
-				for(int i=0; i<this.nodesPosition.size(); i++){
-					Point p = this.nodesPosition.get(i);
-					int tmpDelta = Math.abs(paletX - p.getX()) + Math.abs(paletY - p.getY());
-					if (tmpDelta < delta){
-						tmpDelta = delta;
-						index = i;
-					}
-				}
-				nodesWithPalet.add(index);
-			} else {
-				System.out.println("Palet In camp :"+palet);
-			}
-		}
-		return nodesWithPalet;
-	}
+//	private List<Integer> getNodesWithPalet(List<Point> paletsPosition) {
+//		List<Integer> nodesWithPalet = new ArrayList<Integer>();
+//		for(Point palet : paletsPosition){
+//			int paletX = palet.getX();
+//			int paletY = palet.getY();
+//			int delta = 1000;
+//			int index = -1;
+//			if (!paletIsInCamp(palet)){
+//				System.out.println("Palet NOT In camp :"+palet);
+//				for(int i=0; i<this.nodesPosition.size(); i++){
+//					Point p = this.nodesPosition.get(i);
+//					int tmpDelta = Math.abs(paletX - p.getX()) + Math.abs(paletY - p.getY());
+//					if (tmpDelta < delta){
+//						tmpDelta = delta;
+//						index = i;
+//					}
+//				}
+//				nodesWithPalet.add(index);
+//			} else {
+//				System.out.println("Palet In camp :"+palet);
+//			}
+//		}
+//		return nodesWithPalet;
+//	}
 	
 	private boolean paletIsInCamp(Point palet) {
 		return equationsLinesColors.get(0).y == Color.WHITE && equationsLinesColors.get(1).y == Color.WHITE && (!equationsLinesColors.get(0).x.pointIsAbove(palet) || equationsLinesColors.get(1).x.pointIsAbove(palet));
