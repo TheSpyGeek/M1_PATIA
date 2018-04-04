@@ -432,11 +432,11 @@ public class MyController {
 			}
 			propulsion.stopMoving();
 			graber.open();
-			propulsion.runFor(20, true);
+			propulsion.runFor(5, true);
 			while (graber.isRunning()){
 				graber.checkState();
 			}
-			propulsion.runFor(20, false);
+			propulsion.runFor(5, false);
 			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
 				propulsion.checkState();
 			}
