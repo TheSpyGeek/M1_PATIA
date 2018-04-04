@@ -485,6 +485,7 @@ public class MyController {
 			int delta = 1000;
 			int index = -1;
 			if (!paletIsInCamp(palet)){
+				System.out.println("Palet NOT In camp :"+palet);
 				for(int i=0; i<this.nodesPosition.size(); i++){
 					Point p = this.nodesPosition.get(i);
 					int tmpDelta = Math.abs(paletX - p.getX()) + Math.abs(paletY - p.getY());
@@ -494,13 +495,15 @@ public class MyController {
 					}
 				}
 				nodesWithPalet.add(index);
+			} else {
+				System.out.println("Palet In camp :"+palet);
 			}
 		}
 		return nodesWithPalet;
 	}
 	
 	private boolean paletIsInCamp(Point palet) {
-		return equationsLinesColors.get(0).y == Color.WHITE && equationsLinesColors.get(1).y == Color.WHITE && (!equationsLinesColors.get(0).x.pointIsAbove(palet) || equationsLinesColors.get(1).x.pointIsAbove(palet)));
+		return equationsLinesColors.get(0).y == Color.WHITE && equationsLinesColors.get(1).y == Color.WHITE && (!equationsLinesColors.get(0).x.pointIsAbove(palet) || equationsLinesColors.get(1).x.pointIsAbove(palet));
 	}
 
 	private List<Integer> getNodesWithPaletCloseFromRobot(List<Integer> nodesWithPalet, int nbNodes) {
