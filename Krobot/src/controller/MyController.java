@@ -429,11 +429,16 @@ public class MyController {
 			}
 			propulsion.stopMoving();
 			graber.open();
-			propulsion.runFor(500, true);
+			propulsion.runFor(100, true);
 			while (graber.isRunning()){
 				graber.checkState();
 			}
-			propulsion.runFor(500, false);
+			propulsion.runFor(1000, false);
+			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
+				propulsion.checkState();
+			}
+			propulsion.stopMoving();
+			
 			robotVecteur = vRobHome;
 			updatePositionRobotWithLine();
 			nodesWithPalet = getNodesWithPalet(server.run());
