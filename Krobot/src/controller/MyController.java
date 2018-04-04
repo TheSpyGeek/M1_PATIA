@@ -215,7 +215,7 @@ public class MyController {
             	break;
             // Le robot à croisé la ligne rouge
             case Color.RED:
-                if(equationsLinesColors.get(4).y == Color.RED) {
+                if(equationsLinesColors.get(2).y == Color.RED) {
                 	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(4).x);
                 	System.out.println("Ligne rouge : "+robotPosition.getX()+" "+robotPosition.getY());
@@ -432,7 +432,7 @@ public class MyController {
 			}
 			propulsion.stopMoving();
 			graber.open();
-			propulsion.runFor(100, true);
+			propulsion.runFor(20, true);
 			while (graber.isRunning()){
 				graber.checkState();
 			}
