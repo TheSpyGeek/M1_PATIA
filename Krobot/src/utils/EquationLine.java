@@ -100,4 +100,9 @@ public class EquationLine {
 		System.out.println("Coefficiant directeur:"+this.a);
 		System.out.println("Ordonnée à l'origine:"+this.b);
 	}
+	
+	public boolean pointIsAbove(Point p) {
+		
+		return p.getY() >= this.a * p.getX() + this.b;
+	}
 }
