@@ -369,13 +369,16 @@ public class MyController {
 	}*/
 
 	private void runIA() {
-		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
-		while (!nodesWithPalet.isEmpty()){
-			List<Integer> nodesWithPaletCloseFromRobot = getNodesWithPaletCloseFromRobot(nodesWithPalet, 5);
-			parser.parse(nodesWithPaletCloseFromRobot, getNodeWithRobot(), true);
+//		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
+		List<Point> paletNotInCamp = getPaletNotInCamp(server.run());
+		
+		while (!paletNotInCamp.isEmpty()){
+			//List<Integer> nodesWithPaletCloseFromRobot = getNodesWithPaletCloseFromRobot(nodesWithPalet, 5);
+			//parser.parse(nodesWithPaletCloseFromRobot, getNodeWithRobot(), true);
 			
 			//On récupère les actions à effectué !
-			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
+//			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
+			Point paletToGet = paletNotInCamp.get(0);
 //			System.out.println("Palet to get : "+paletToGet);
 			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
@@ -447,7 +450,7 @@ public class MyController {
 			
 			robotVecteur = vRobHome;
 			updatePositionRobotWithLine();
-			nodesWithPalet = getNodesWithPalet(server.run());
+			paletNotInCamp = getPaletNotInCamp(server.run());
 		}
 	}
 
@@ -480,6 +483,19 @@ public class MyController {
 		return (char) (index+65);
 	}
 
+	private List<Point> getPaletNotInCamp(List<Point> paletsPosition) {
+		List<Point> paletNotInCamp = new ArrayList<Point>();
+		for(Point palet : paletsPosition){
+			if (!paletIsInCamp(palet)){
+				paletsPosition.add(palet);
+				System.out.println("Palet NOT In camp :"+palet);
+			} else {
+				System.out.println("Palet In camp :"+palet);
+			}
+		}
+		return paletNotInCamp;
+	}
+	
 	private List<Integer> getNodesWithPalet(List<Point> paletsPosition) {
 		List<Integer> nodesWithPalet = new ArrayList<Integer>();
 		for(Point palet : paletsPosition){
