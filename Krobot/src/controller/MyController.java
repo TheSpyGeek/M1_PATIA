@@ -217,6 +217,7 @@ public class MyController {
             // Le robot à croisé la ligne rouge
             case Color.RED:
             	System.out.print("Ligne red: ");
+
                 if(equationsLinesColors.get(2).y == Color.RED) {
                 	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(4).x);
@@ -434,11 +435,11 @@ public class MyController {
 			}
 			propulsion.stopMoving();
 			graber.open();
-			propulsion.runFor(100, true);
+			propulsion.runFor(20, true);
 			while (graber.isRunning()){
 				graber.checkState();
 			}
-			propulsion.runFor(1000, false);
+			propulsion.runFor(20, false);
 			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
 				propulsion.checkState();
 			}
@@ -487,6 +488,7 @@ public class MyController {
 			int delta = 1000;
 			int index = -1;
 			if (!paletIsInCamp(palet)){
+				System.out.println("Palet NOT In camp :"+palet);
 				for(int i=0; i<this.nodesPosition.size(); i++){
 					Point p = this.nodesPosition.get(i);
 					int tmpDelta = Math.abs(paletX - p.getX()) + Math.abs(paletY - p.getY());
@@ -496,13 +498,15 @@ public class MyController {
 					}
 				}
 				nodesWithPalet.add(index);
+			} else {
+				System.out.println("Palet In camp :"+palet);
 			}
 		}
 		return nodesWithPalet;
 	}
 	
 	private boolean paletIsInCamp(Point palet) {
-		return equationsLinesColors.get(0).y == Color.WHITE && equationsLinesColors.get(1).y == Color.WHITE && (!equationsLinesColors.get(0).x.pointIsAbove(palet) || equationsLinesColors.get(1).x.pointIsAbove(palet)));
+		return equationsLinesColors.get(0).y == Color.WHITE && equationsLinesColors.get(1).y == Color.WHITE && (!equationsLinesColors.get(0).x.pointIsAbove(palet) || equationsLinesColors.get(1).x.pointIsAbove(palet));
 	}
 
 	private List<Integer> getNodesWithPaletCloseFromRobot(List<Integer> nodesWithPalet, int nbNodes) {
