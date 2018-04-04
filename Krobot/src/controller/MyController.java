@@ -431,10 +431,13 @@ public class MyController {
 			}
 			propulsion.stopMoving();
 			graber.open();
+			propulsion.runFor(500, true);
 			while (graber.isRunning()){
 				graber.checkState();
 			}
 			propulsion.runFor(500, false);
+			robotVecteur = vRobHome;
+			updatePositionRobotWithLine();
 			nodesWithPalet = getNodesWithPalet(server.run());
 		}
 	}
