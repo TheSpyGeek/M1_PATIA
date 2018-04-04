@@ -183,7 +183,7 @@ public class MyController {
 		Point p2 = listPalets.get(1);
 		EquationLine equation = new EquationLine(p1,p2);
 		equationsLinesColors.add(new Tuple<>(equation,new Integer(color)));
-		equation.printEquationParameters();
+		//equation.printEquationParameters();
 	}
 	
 	/**
@@ -205,11 +205,13 @@ public class MyController {
                 	if(equationsLinesColors.get(0).y == Color.WHITE) {
                 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 		robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(0).x);
+                		System.out.println("Ligne blanche : "+robotPosition.getX()+" "+robotPosition.getY());
                 	}
                 }else {
                 	if(equationsLinesColors.get(1).y == Color.WHITE) {
                 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 		robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(1).x);
+                		System.out.println("Ligne blanche 2 : "+robotPosition.getX()+" "+robotPosition.getY());
                 	}
                 }
             	break;
@@ -218,6 +220,7 @@ public class MyController {
                 if(equationsLinesColors.get(4).y == Color.RED) {
                 	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(4).x);
+                	System.out.println("Ligne rouge : "+robotPosition.getX()+" "+robotPosition.getY());
                 }
             	break;
             default:          
