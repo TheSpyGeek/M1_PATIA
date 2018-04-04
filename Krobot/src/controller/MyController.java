@@ -436,7 +436,7 @@ public class MyController {
 			while (graber.isRunning()){
 				graber.checkState();
 			}
-			propulsion.runFor(1000, false);
+			propulsion.runFor(20, false);
 			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
 				propulsion.checkState();
 			}
