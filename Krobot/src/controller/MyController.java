@@ -436,6 +436,9 @@ public class MyController {
 					return;
 			}
 			propulsion.stopMoving();
+			robotVecteur = vRobHome;
+			updatePositionRobotWithLine();
+			
 			graber.open();
 			propulsion.run(true);
 			while (vision.getRaw()[0] < R2D2Constants.COLLISION_DISTANCE);
@@ -446,8 +449,7 @@ public class MyController {
 			}
 			propulsion.stopMoving();
 			
-			robotVecteur = vRobHome;
-			updatePositionRobotWithLine();
+			
 			paletNotInCamp = getPaletNotInCamp(server.run());
 		}
 	}
