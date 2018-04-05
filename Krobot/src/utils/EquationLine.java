@@ -67,9 +67,9 @@ public class EquationLine implements Serializable{
 		double vecteurY = (double) vecteurLine.getY();
 		double pointOnLineX = (double) pointOnLine.getX();
 		double pointOnLineY = (double) pointOnLine.getY();
-		
-		this.a = vecteurY / vecteurX;
-		this.b = (vecteurX * pointOnLineX - vecteurY * pointOnLineY)/ vecteurX; 
+		this.a = vecteurX != 0 ? vecteurY / vecteurX : 0;
+		//this.b = (vecteurX * pointOnLineX - vecteurY * pointOnLineY)/ vecteurX; 
+		this.b = pointOnLineX - (this.a * pointOnLineY);
 	}
 		
 	/**
@@ -84,8 +84,8 @@ public class EquationLine implements Serializable{
 	public Point IntersectionWithEquation(EquationLine equation) {
 		double m = equation.getA();
 		double p = equation.getB();
-		double x = p - this.b / this.a - m;
-		double y = this.a * x + this.b;
+		double x = (p - this.b) / (this.a - m);
+		double y = (this.a * x) + this.b;
 		
 		return new Point((int)x,(int)y);
 	}

@@ -83,9 +83,9 @@ public class MyController {
 				"Appuyez sur echap ","pour skipper");
 		boolean skip = input.waitOkEscape(Button.ID_ESCAPE);
 		if(skip || calibration()){
-			if(!skip){
+			if (!skip)
 				saveCalibration();
-			}
+
 			
 			input.waitAny();
 			
@@ -191,25 +191,31 @@ public class MyController {
 	 * 
 	 * @author duvernet
 	 */ 
-	private void updatePositionRobotWithLine() {
-		int currentColor = color.getCurrentColor();
+	private void updatePositionRobotWithLine(int c) {
+		int currentColor = c;
+		if (currentColor == -1)
+			currentColor = color.getCurrentColor();
 		System.out.println("Get la couleur"+currentColor);
 		switch (currentColor) {
 			// Le robot a croisé une des lignes 
             case Color.WHITE:
-            	System.out.print("Ligne blanche: ");
+            	System.out.println("Robot Vecteur x="+robotVecteur.getX()+" Y="+robotVecteur.getY());
             	// Le robot était en direction de la ligne blanche la plus proche de l'origine
-                if(robotVecteur.getY() > 0) {
+                if(robotVecteur.getY() < 0) {
+                	System.out.println("Ligne blanche 1");
                 	if(equationsLinesColors.get(0).y == Color.WHITE) {
                 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 		robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(0).x);
-                		System.out.println(robotPosition.getX()+" "+robotPosition.getY());
+                		lineRobot.printEquationParameters();
+                		equationsLinesColors.get(0).x.printEquationParameters();
+                		System.out.println("Robot position =" + robotPosition.getX()+" "+robotPosition.getY());
                 	}
                 }else {
+                	System.out.println("Ligne blanche 2");
                 	if(equationsLinesColors.get(1).y == Color.WHITE) {
                 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 		robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(1).x);
-                		System.out.println(" 2 "+robotPosition.getX()+" "+robotPosition.getY());
+                		System.out.println("Robot position =" + robotPosition.getX()+" "+robotPosition.getY());
                 	}
                 }
             	break;
@@ -219,7 +225,7 @@ public class MyController {
 
                 if(equationsLinesColors.get(2).y == Color.RED) {
                 	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
-                	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(4).x);
+                	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(2).x);
                 	System.out.println(robotPosition.getX()+" "+robotPosition.getY());
                 }
             	break;
@@ -472,13 +478,18 @@ releasepalet c p2
 				if(input.escapePressed())
 					return;
 			}
+			robotVecteur = vRobHome;
 			propulsion.run(true);
 			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
+				//updatePositionRobotWithLine();
 				propulsion.checkState();
 				if(input.escapePressed())
 					return;
 			}
 			propulsion.stopMoving();
+			updatePositionRobotWithLine(Color.WHITE);
+			System.out.println("POSITION COURANTE :"+robotPosition);
+			
 			graber.open();
 			propulsion.run(true);
 			while (vision.getRaw()[0] < R2D2Constants.COLLISION_DISTANCE);
@@ -489,8 +500,7 @@ releasepalet c p2
 			}
 			propulsion.stopMoving();
 			
-			robotVecteur = vRobHome;
-			updatePositionRobotWithLine();
+			
 			paletNotInCamp = getPaletNotInCamp(server.run());
 		}
 	}
