@@ -86,8 +86,7 @@ public class MyController {
 			if(!skip){
 				saveCalibration();
 			}
-			calibrateNodeEquationLine();
-			screen.drawText("Fin de la calibration des lignes");
+			
 			input.waitAny();
 			
 			screen.drawText("Lancer", 
@@ -124,21 +123,21 @@ public class MyController {
 	 * 
 	 * @return True si la calibration c'est bien passé sinon False
 	 */
-	private boolean calibrateNodeEquationLine() {	
-		screen.drawText("Calibration", 
-				"Préparez deux palets à la ","calibration des lignes de couleurs",
-				"Appuyez sur le bouton central ","pour continuer");
-		
-		if(input.waitOkEscape(Button.ID_ENTER)){
+	private boolean calibrateNodeEquationLine() {
+		screen.drawText("Calibration Lignes", 
+		"Appuyez sur echap ","pour skipper");
+		boolean skip = input.waitOkEscape(Button.ID_ESCAPE);
+			
+		if(!skip){
 			color.lightOn();
 
 			//Calibration equation ligne blanche
-			screen.drawText("Placer deux palets","sur la ligne blanche","la plus proche de l'origine");
+			screen.drawText("Placer deux palets","sur la ligne blanche","la plus proche","de l'origine");
 			input.waitAny();
 			addEquationLineFromPalet(Color.WHITE);
 			
 			//calibration equation deuxième ligne blanche 
-			screen.drawText("Placer deux palets","sur la ligne blanche","la plus éloignée de l'origine");
+			screen.drawText("Placer deux palets","sur la ligne blanche","la plus éloignée"," de l'origine");
 			input.waitAny();
 			addEquationLineFromPalet(Color.WHITE);
 			
@@ -477,11 +476,10 @@ releasepalet c p2
 			}
 			propulsion.stopMoving();
 			graber.open();
-			propulsion.runFor(1, true);
-			while (graber.isRunning()){
-				graber.checkState();
-			}
-			propulsion.runFor(1, false);
+			propulsion.run(true);
+			while (vision.getRaw()[0] < R2D2Constants.COLLISION_DISTANCE);
+			propulsion.stopMoving();
+			propulsion.run(false);
 			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
 				propulsion.checkState();
 			}
@@ -596,7 +594,7 @@ releasepalet c p2
 			color.setCalibration((float[][])ois.readObject());
 			graber.setOpenTime((long)ois.readObject());
 			// /!\ Je sais pas si ça fonctionne !!
-			//equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject(); 
+			equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject(); 
 			ois.close();
 		}
 	}
@@ -657,7 +655,8 @@ releasepalet c p2
 	 * @return vrai si tout c'est bien passé.
 	 */
 	private boolean calibration() {
-		return calibrationGrabber() && calibrationCouleur();
+	
+		return calibrationGrabber() && calibrationCouleur() && calibrateNodeEquationLine();
 	}
 
 	private boolean calibrationGrabber() {
