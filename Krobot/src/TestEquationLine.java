@@ -17,8 +17,7 @@ public class TestEquationLine {
 		Point p7 = new Point(148, 252);
 		Point p8 = new Point(153, 2);
 		
-		Point p10 = new Point(149, 197);
-		Point  vecteur = new Point(0,-20);
+
 		
 		EquationLine e1 = new EquationLine(p1,p2);
 		e1.printEquationParameters();
@@ -43,7 +42,14 @@ public class TestEquationLine {
 		
 		System.out.println("TEST : ");
 		
+				Point p10 = new Point(149, 197);
+		Point  vecteur = new Point(0,-20);
+		
+		EquationLine white = new EquationLine(0,4);
 		EquationLine temp = new EquationLine(p10,vecteur,true);
 		System.out.println(temp.getA()+" "+temp.getB());
+		
+		Point f = temp.IntersectionWithEquation(white);
+		System.out.println(f.getX()+" "+f.getY());
 	}
 }

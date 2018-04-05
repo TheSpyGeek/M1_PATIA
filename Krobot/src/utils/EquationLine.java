@@ -45,6 +45,7 @@ public class EquationLine implements Serializable{
 	public EquationLine(double a, double b){
 		this.a = a;
 		this.b = b;
+		this.infinityCoef = false;
 	}
 	/**
 	 * Calcul une equation de droite affine en fonction d'un point et d'un vecteur de cette droite
@@ -67,7 +68,12 @@ public class EquationLine implements Serializable{
 		double vecteurY = (double) vecteurLine.getY();
 		double pointOnLineX = (double) pointOnLine.getX();
 		double pointOnLineY = (double) pointOnLine.getY();
-		this.a = vecteurX != 0 ? vecteurY / vecteurX : 0;
+		if(vecteurX == 0) {
+			infinityCoef = true;
+			
+		}else {
+			this.a = vecteurY / vecteurX;
+		}		
 		//this.b = (vecteurX * pointOnLineX - vecteurY * pointOnLineY)/ vecteurX; 
 		this.b = pointOnLineX - (this.a * pointOnLineY);
 	}
@@ -82,12 +88,22 @@ public class EquationLine implements Serializable{
 	 * @return Retourne le point d'intersection des deux equations affines
 	 */
 	public Point IntersectionWithEquation(EquationLine equation) {
-		double m = equation.getA();
-		double p = equation.getB();
-		double x = (p - this.b) / (this.a - m);
-		double y = (this.a * x) + this.b;
-		
-		return new Point((int)x,(int)y);
+		if(equation.infinityCoef) {
+			double y = this.getA() * equation.getB() + this.b;
+			return new Point((int)equation.getB(),(int)y);
+		}
+		else if(this.infinityCoef) {
+			double y = this.getA() * equation.getB() + this.b;
+			return new Point((int)equation.getB(),(int)y);
+		}else {
+			double m = equation.getA();
+			double p = equation.getB();
+			double x = (p - this.b) / (this.a - m);
+			double y = (this.a * x) + this.b;
+			
+			return new Point((int)x,(int)y);
+		}
+
 	}
 
 	public double getA() {
