@@ -395,6 +395,10 @@ releasepalet c p2
 					System.err.println("Erreur de split de l'action à réaliser");
 				}
 				
+				switch(moveParsed[0]) {
+//					case "moverobot:
+				}
+				
 			}
 			
 		} catch (IOException e) {
