@@ -1,7 +1,13 @@
 package utils;
 
-public class Tuple<X, Y>{ 
+import java.io.Serializable;
 
+public class Tuple<X, Y> implements Serializable{ 
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8265529959430573584L;
 	public final X x; 
 	public final Y y;
 	

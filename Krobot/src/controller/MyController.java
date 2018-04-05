@@ -554,7 +554,6 @@ public class MyController {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
 			color.setCalibration((float[][])ois.readObject());
 			graber.setOpenTime((long)ois.readObject());
-			// /!\ Je sais pas si ça fonctionne !!
 			equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject(); 
 			ois.close();
 		}
