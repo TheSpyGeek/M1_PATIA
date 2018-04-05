@@ -10,7 +10,8 @@ public class EquationLine implements Serializable{
 	private static final long serialVersionUID = -9177158113600041557L;
 	double a; // Le coefficient directeur
 	double b; // L'ordonnée à l'origine 
-	
+    boolean infinityCoef;
+    
 	/**
 	 * Calcul une equation selon deux points donnés
 	 * 
@@ -25,8 +26,12 @@ public class EquationLine implements Serializable{
 		
 		double p2X = (double) p2.getX();
 		double p2Y = (double) p2.getY();
+	    if(p2X - p1X == 0) {
+	    	infinityCoef = true;
+	    }else {
+	    	this.a = (p2Y- p1Y) / (p2X - p1X);
+	    }
 		
-		this.a = (p2Y- p1Y) / (p2X - p1X);
 		this.b = p1Y - this.a * p1X;
 	}
 	/**

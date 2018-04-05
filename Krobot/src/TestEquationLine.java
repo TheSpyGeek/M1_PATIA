@@ -16,7 +16,10 @@ public class TestEquationLine {
 		
 		Point p7 = new Point(148, 252);
 		Point p8 = new Point(153, 2);
-
+		
+		Point p10 = new Point(149, 197);
+		Point  vecteur = new Point(0,-20);
+		
 		EquationLine e1 = new EquationLine(p1,p2);
 		e1.printEquationParameters();
 		EquationLine e2 = new EquationLine(p3,p4);
@@ -37,5 +40,10 @@ public class TestEquationLine {
 		Point p9 = new Point(1,4);
 		EquationLine e6 = new EquationLine(1,2);
 		System.out.print(e6.pointIsAbove(p9));
+		
+		System.out.println("TEST : ");
+		
+		EquationLine temp = new EquationLine(p10,vecteur,true);
+		System.out.println(temp.getA()+" "+temp.getB());
 	}
 }
