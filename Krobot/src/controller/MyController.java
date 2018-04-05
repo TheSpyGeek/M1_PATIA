@@ -458,7 +458,12 @@ releasepalet c p2
 				graber.checkState();
 			}
 			
-			robotPosition = paletToGet;
+			
+			double normeRobPal = Math.sqrt(Math.pow(vRobPal.getX(), 2) + Math.pow(vRobPal.getY(), 2));
+			Tuple<Double,Double> vectorTmp = new Tuple<Double,Double>((-vRobPal.getX()/normeRobPal), (-vRobPal.getY()/normeRobPal));
+			robotPosition = new Point((int)((10*vectorTmp.x) + paletToGet.getX()), (int)((10*vectorTmp.y) + paletToGet.getY()));
+			System.out.println("Robot Position="+robotPosition);
+			
 			robotVecteur = vRobPal;
 			
 			Point toHome = new Point(robotPosition.getX(), top ? robotPosition.getY() - 20 : robotPosition.getY() + 20);
