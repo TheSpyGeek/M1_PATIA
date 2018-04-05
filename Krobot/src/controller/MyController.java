@@ -438,11 +438,10 @@ public class MyController {
 			}
 			propulsion.stopMoving();
 			graber.open();
-			propulsion.runFor(1, true);
-			while (graber.isRunning()){
-				graber.checkState();
-			}
-			propulsion.runFor(1, false);
+			propulsion.run(true);
+			while (vision.getRaw()[0] < R2D2Constants.COLLISION_DISTANCE);
+			propulsion.stopMoving();
+			propulsion.run(false);
 			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
 				propulsion.checkState();
 			}
