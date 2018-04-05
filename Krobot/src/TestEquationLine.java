@@ -32,5 +32,10 @@ public class TestEquationLine {
 		Point v = new Point(2,1);
 		EquationLine e5 = new EquationLine(p1,v,true);
 		System.out.println(e5.getA()+" "+e5.getB());
+		
+		/*  TEST Methode pointIsAbove()*/
+		Point p9 = new Point(1,4);
+		EquationLine e6 = new EquationLine(1,2);
+		System.out.print(e6.pointIsAbove(p9));
 	}
 }
