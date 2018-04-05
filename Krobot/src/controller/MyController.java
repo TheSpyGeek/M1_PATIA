@@ -344,29 +344,68 @@ public class MyController {
 //        System.out.println(angleBetweenPoints(p1, p2));
 //    }
 	
-	/*private void runIAPDDL() {
+	/* moves 
+	 * 
+	 * 
+	 * 
+	 * moverobot1 a d
+moverobot1 d g
+getpalet g p3
+movepaletandrobot2 g d p3
+movepaletandrobot2 d a p3
+releasepalet a p3
+moverobot1 a d
+getpalet d p0
+movepaletandrobot1 d e p0
+movepaletandrobot2 e b p0
+releasepalet b p0
+moverobot1 b e
+moverobot1 e h
+getpalet h p4
+movepaletandrobot2 h e p4
+movepaletandrobot2 e b p4
+releasepalet b p4
+moverobot1 b e
+getpalet e p1
+movepaletandrobot2 e b p1
+releasepalet b p1
+moverobot1 b c
+moverobot1 c f
+getpalet f p2
+movepaletandrobot2 f c p2
+releasepalet c p2
+
+	 * 
+	 * 
+	 * */
+	
+	private void runIAPDDL() {
+		
 		
 		List<String> moveToDo;
-		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
-		while (!nodesWithPalet.isEmpty()){
+		
+		try {
+			moveToDo = parser.runProblem();
 			
-			// calcul node robot
-			char nodeRobot = '0';
-			parser.parse(nodesWithPalet, nodeRobot, true);
-			try {
-				moveToDo = parser.runProblem();
+			
+			while (!moveToDo.isEmpty()){
 				
+				String [] moveParsed = moveToDo.get(0).split(" ");
 				
-			} catch (IOException e) {
-				System.err.println("Erreur lors du run problem");
-				e.printStackTrace();
+				if(moveParsed.length < 3) {
+					System.err.println("Erreur de split de l'action à réaliser");
+				}
+				
 			}
 			
-			
-			nodesWithPalet = getNodesWithPalet(server.run());
+		} catch (IOException e) {
+			System.err.println("Erreur lors du run problem");
+			e.printStackTrace();
 		}
 		
-	}*/
+	
+		
+	}
 
 	private void runIA() {
 //		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
