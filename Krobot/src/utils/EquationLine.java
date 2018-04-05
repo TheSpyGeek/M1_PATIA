@@ -1,8 +1,13 @@
 package utils;
 
 import ServerSearch.Point;
+import java.io.Serializable;
 
-public class EquationLine {
+public class EquationLine implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9177158113600041557L;
 	double a; // Le coefficient directeur
 	double b; // L'ordonnée à l'origine 
 	
