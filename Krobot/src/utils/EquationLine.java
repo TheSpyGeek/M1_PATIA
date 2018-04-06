@@ -45,7 +45,7 @@ public class EquationLine implements Serializable{
 	public EquationLine(double a, double b){
 		this.a = a;
 		this.b = b;
-		this.infinityCoef = false;
+		this.infinityCoef= false;
 	}
 	/**
 	 * Calcul une equation de droite affine en fonction d'un point et d'un vecteur de cette droite
@@ -93,8 +93,8 @@ public class EquationLine implements Serializable{
 			return new Point((int)equation.getB(),(int)y);
 		}
 		else if(this.infinityCoef) {
-			double y = this.getA() * equation.getB() + this.b;
-			return new Point((int)equation.getB(),(int)y);
+			double y = equation.getA() * this.getB() + equation.b;
+			return new Point((int)this.getB(),(int)y);
 		}else {
 			double m = equation.getA();
 			double p = equation.getB();
@@ -125,6 +125,7 @@ public class EquationLine implements Serializable{
 	public void printEquationParameters() {
 		System.out.println("Coefficiant directeur:"+this.a);
 		System.out.println("Ordonnée à l'origine:"+this.b);
+		System.out.println("INFINI:"+this.infinityCoef);
 	}
 	
 	public boolean pointIsAbove(Point p) {
