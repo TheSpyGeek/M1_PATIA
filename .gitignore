@@ -5,3 +5,6 @@ Code_Mindstorm/
 bin/
 *.iml
 .idea
+*~
+Rapport/images
+*#*#

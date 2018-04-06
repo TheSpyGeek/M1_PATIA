@@ -6,7 +6,6 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -85,7 +84,6 @@ public class Server {
 	 */
 	
 	public List<Point> run() {
-		System.out.println("Start searching");
 		try {
 			this.dsocket = new DatagramSocket(PORT);
 		} catch (SocketException e1) {
@@ -112,11 +110,9 @@ public class Server {
 	        	int x = Integer.parseInt(coord[1]);
 	        	int y = 300 - Integer.parseInt(coord[2]); // convertion en mode 'genius'
 	        	Point p = new Point(x, y);
-	        	System.out.println(p);
 	        	points.add(p);
 			}
         }
-		System.out.println("Finished");
 		interrupt();
 		return points;
 	}

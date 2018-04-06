@@ -43,7 +43,7 @@ public class MyController {
 	protected List<Point> nodesPosition = null;
 	protected Point		  robotPosition	= null;
 	protected Point		   robotVecteur	= null;
-	protected EquationLine lineRobot = null;
+	protected EquationLine    lineRobot = null;
 	protected boolean		 top 		= false;
 	
 	protected ArrayList<Tuple<EquationLine,Integer>> equationsLinesColors;
@@ -79,39 +79,12 @@ public class MyController {
 	 */
 	public void start() throws IOException, ClassNotFoundException{
 		loadCalibration();
-		screen.drawText("Calibration", 
-				"Appuyez sur echap ","pour skipper");
-		boolean skip = input.waitOkEscape(Button.ID_ESCAPE);
-		if(skip || calibration()){
-			if (!skip)
-				saveCalibration();
+		calibration();
+		saveCalibration();
 
-			
-			input.waitAny();
-			
-			screen.drawText("Lancer", 
-				"Appuyez sur OK si la","ligne noire est à gauche",
-				"Appuyez sur tout autre", "elle est à droite");
-			calibrateNodePosition();
-			screen.drawText("Lancer", 
-					"Mettre un palet sur","le robot","OK si haut autre", "si bas");
-			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-				this.top = true;
-				calibrateRobotPositionAndVector();
-			}else{
-				this.top = false;
-				calibrateRobotPositionAndVector();
-			}
-			screen.drawText("Lancer", 
-					"Ok pour run");
-			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-				runIA();
-			}
-//			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-//				mainLoop(true);
-//			}else{
-//				mainLoop(false);
-//			}
+		screen.drawText("Lancer", "Ok pour run");
+		if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
+			runIA();
 		}
 		cleanUp();
 	}
@@ -125,10 +98,8 @@ public class MyController {
 	 */
 	private boolean calibrateNodeEquationLine() {
 		screen.drawText("Calibration Lignes", 
-		"Appuyez sur echap ","pour skipper");
-		boolean skip = input.waitOkEscape(Button.ID_ESCAPE);
-			
-		if(!skip){
+		"Appuyez sur echap ","pour skipper");			
+		if(!input.waitOkEscape(Button.ID_ESCAPE)){
 			color.lightOn();
 
 			//Calibration equation ligne blanche
@@ -155,7 +126,6 @@ public class MyController {
 			screen.drawText("Placer deux palets","sur la ligne rouge");
 			input.waitAny();
 			addEquationLineFromPalet(Color.RED);
-			
 			return true;
 		}
 		return false;
@@ -235,62 +205,62 @@ public class MyController {
 	}
 		
 	private void calibrateNodePosition() {
-		this.server = new Server();
-		List<Point> tmp = server.run();
-		if (tmp.size() != 9){
-			System.out.println("Error bad number of palet on table");
-			return;
-		}
-		Collections.sort(tmp);
-//		System.out.println("Point triées :");
-//		for(Point p : tmp)
-//			System.out.println(p);
-		for(int i=0; i<3; i++){
-			Point a = tmp.get(i*3);
-			Point b = tmp.get(i*3+1);
-			Point c = tmp.get(i*3+2);
-			if (a.getY() < b.getY() && a.getY() < c.getY()){
-				this.nodesPosition.add(i*3, a);
-				if (b.getY() < c.getY()){
-					this.nodesPosition.add((i*3)+1, b);
-					this.nodesPosition.add((i*3)+2, c);
-				}
-				else{
-					this.nodesPosition.add((i*3)+1, c);
-					this.nodesPosition.add((i*3)+2, b);
-				}
-			} else if (b.getY() < a.getY() && b.getY() <c.getY()){
-				this.nodesPosition.add(i*3, b);
-				if (a.getY() < c.getY()){
-					this.nodesPosition.add((i*3)+1, a);
-					this.nodesPosition.add((i*3)+2, c);
-				}
-				else{
-					this.nodesPosition.add((i*3)+1, c);
-					this.nodesPosition.add((i*3)+2, a);
-				}
-			} else {
-				this.nodesPosition.add(i*3, c);
-				if (a.getY() < b.getY()){
-					this.nodesPosition.add((i*3)+1, a);
-					this.nodesPosition.add((i*3)+2, b);
-				}
-				else{
-					this.nodesPosition.add((i*3)+1, b);
-					this.nodesPosition.add((i*3)+2, a);
+		screen.drawText("Calibration", "Mettre tout les", 
+			"palets sur leur","position",
+			"Echap pour skip");
+		if(!input.waitOkEscape(Button.ID_ESCAPE)){
+			this.server = new Server();
+			List<Point> tmp = server.run();
+			if (tmp.size() != 9){
+				System.out.println("Error bad number of palet on table");
+				return;
+			}
+			Collections.sort(tmp);
+			for(int i=0; i<3; i++){
+				Point a = tmp.get(i*3);
+				Point b = tmp.get(i*3+1);
+				Point c = tmp.get(i*3+2);
+				if (a.getY() < b.getY() && a.getY() < c.getY()){
+					this.nodesPosition.add(i*3, a);
+					if (b.getY() < c.getY()){
+						this.nodesPosition.add((i*3)+1, b);
+						this.nodesPosition.add((i*3)+2, c);
+					}
+					else{
+						this.nodesPosition.add((i*3)+1, c);
+						this.nodesPosition.add((i*3)+2, b);
+					}
+				} else if (b.getY() < a.getY() && b.getY() <c.getY()){
+					this.nodesPosition.add(i*3, b);
+					if (a.getY() < c.getY()){
+						this.nodesPosition.add((i*3)+1, a);
+						this.nodesPosition.add((i*3)+2, c);
+					}
+					else{
+						this.nodesPosition.add((i*3)+1, c);
+						this.nodesPosition.add((i*3)+2, a);
+					}
+				} else {
+					this.nodesPosition.add(i*3, c);
+					if (a.getY() < b.getY()){
+						this.nodesPosition.add((i*3)+1, a);
+						this.nodesPosition.add((i*3)+2, b);
+					}
+					else{
+						this.nodesPosition.add((i*3)+1, b);
+						this.nodesPosition.add((i*3)+2, a);
+					}
 				}
 			}
 		}
-//		System.out.println("Nodes : ");
-//		for(Point node : this.nodesPosition)
-//			System.out.println(node);
 	}
 	
 	private void calibrateRobotPositionAndVector() {
+		screen.drawText("Calibration", "Calibration robot", "OK si Top autre", "si bas");
+		this.top = input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER);
 		this.server = new Server();
 		List<Point> tmp = server.run();
 		Collections.sort(tmp);
-//		System.out.println("Sorted palet :");
 		this.robotPosition = tmp.get(0);
 		for (Point p : tmp) {
 			if(top && this.robotPosition.getY() < p.getY()) {
@@ -298,11 +268,7 @@ public class MyController {
 			} else if(!top && this.robotPosition.getY() > p.getY()) {
 				this.robotPosition = p;
 			}
-//			System.out.println(p);
 		}
-			
-		//this.robotPosition = tmp.get(top ? 0 : tmp.size()-1);
-//		System.out.println("RobotPosition : "+this.robotPosition);
 		Point far;
 		Point far1 = nodesPosition.get(2);
 		Point far2 = nodesPosition.get(5);
@@ -312,7 +278,6 @@ public class MyController {
 			far2 = nodesPosition.get(3);
 			far3 = nodesPosition.get(6);
 		}
-//		System.out.println(far1 + " " + far2 + " " + far3);
 		if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far2.getX()-robotPosition.getX())){
 			if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
 				far = far1;
@@ -324,9 +289,7 @@ public class MyController {
 		} else {
 			far = far3;
 		}
-//		System.out.println("Far point : "+far );
 		robotVecteur = new Point(far.getX() - this.robotPosition.getX(), far.getY() - this.robotPosition.getY());
-//		System.out.println("VecteurRobot="+robotVecteur);
 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
 	}
 	
@@ -450,7 +413,8 @@ releasepalet c p2
 			
 			//On récupère les actions à effectué !
 //			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
-			Point paletToGet = paletNotInCamp.get(0);
+//			Point paletToGet = paletNotInCamp.get(0);
+			Point paletToGet = getPaletClosestFromRobot(paletNotInCamp);
 //			System.out.println("Palet to get : "+paletToGet);
 			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
@@ -532,6 +496,22 @@ releasepalet c p2
 			
 			paletNotInCamp = getPaletNotInCamp(server.run());
 		}
+	}
+
+	private Point getPaletClosestFromRobot(List<Point> paletNotInCamp) {
+		int delta = 1000;
+		Point tmpClosest = null;
+		int robotX = this.robotPosition.getX();
+		int robotY = this.robotPosition.getY();
+		for(int i=0; i<paletNotInCamp.size(); i++){
+			Point p = paletNotInCamp.get(i);
+			int tmpDelta = Math.abs(robotX - p.getX()) + Math.abs(robotY - p.getY());
+			if (tmpDelta < delta){
+				delta = tmpDelta;
+				tmpClosest = p;
+			}
+		}
+		return tmpClosest;
 	}
 
 	private double angleCalculation(Point paletToGet) {
@@ -636,7 +616,8 @@ releasepalet c p2
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
 			color.setCalibration((float[][])ois.readObject());
 			graber.setOpenTime((long)ois.readObject());
-			equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject(); 
+			equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject();
+			nodesPosition = (ArrayList<Point>)ois.readObject();
 			ois.close();
 		}
 	}
@@ -661,6 +642,7 @@ releasepalet c p2
 			str.writeObject(color.getCalibration());
 			str.writeObject(graber.getOpenTime());
 			str.writeObject(equationsLinesColors);
+			str.writeObject(nodesPosition);
 			str.flush();
 			str.close();
 		}
@@ -684,21 +666,17 @@ releasepalet c p2
 	}
 
 	/**
-	 * Lance les tests du robot, peut être desactivé pour la persy cup
-	 */
-	private void runTests() {
-//		SystemTest.grabberTest(this);
-	}
-
-	/**
 	 * S'occupe d'effectuer l'ensemble des calibrations nécessaires au bon
 	 * fonctionnement du robot.
 	 * 
 	 * @return vrai si tout c'est bien passé.
 	 */
-	private boolean calibration() {
-	
-		return calibrationGrabber() && calibrationCouleur() && calibrateNodeEquationLine();
+	private void calibration() {
+		calibrationGrabber();
+		calibrationCouleur();
+		calibrateNodeEquationLine();
+		calibrateNodePosition();
+		calibrateRobotPositionAndVector();
 	}
 
 	private boolean calibrationGrabber() {
