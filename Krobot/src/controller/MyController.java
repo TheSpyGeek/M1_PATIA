@@ -415,6 +415,7 @@ releasepalet c p2
 //			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
 //			Point paletToGet = paletNotInCamp.get(0);
 			Point paletToGet = getPaletClosestFromRobot(paletNotInCamp);
+			System.out.println("Palet to Get :"+paletToGet);
 //			System.out.println("Palet to get : "+paletToGet);
 			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
@@ -450,12 +451,12 @@ releasepalet c p2
 			double normeRobPal = Math.sqrt(Math.pow(vRobPal.getX(), 2) + Math.pow(vRobPal.getY(), 2));
 			Tuple<Double,Double> vectorTmp = new Tuple<Double,Double>((-vRobPal.getX()/normeRobPal), (-vRobPal.getY()/normeRobPal));
 			robotPosition = new Point((int)((10*vectorTmp.x) + paletToGet.getX()), (int)((10*vectorTmp.y) + paletToGet.getY()));
-			System.out.println("Robot Position="+robotPosition);
+			System.out.println("GETPALET _ Robot Position="+robotPosition);
 			
 			robotVecteur = vRobPal;
 			
 			Point toHome = new Point(robotPosition.getX(), top ? robotPosition.getY() - 20 : robotPosition.getY() + 20);
-			System.out.println("Palet to get : "+paletToGet);
+			System.out.println("HOME_POSITION : "+toHome);
 			Point vRobHome = new Point(toHome.getX() - this.robotPosition.getX(), toHome.getY() - this.robotPosition.getY());
 			angleToRotate = angleCalculation(toHome);
 			zproduct = (vRobHome.getX() * robotVecteur.getY()) - (vRobHome.getY() * robotVecteur.getX());
@@ -481,18 +482,14 @@ releasepalet c p2
 			}
 			propulsion.stopMoving();
 			updatePositionRobotWithLine(Color.WHITE);
-			System.out.println("POSITION COURANTE :"+robotPosition);
+			System.out.println("TOHOME _ robot position :"+robotPosition);
 			
 			graber.open();
-			propulsion.run(true);
-			while (vision.getRaw()[0] < R2D2Constants.COLLISION_DISTANCE);
-			propulsion.stopMoving();
-			propulsion.run(false);
-			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
+			propulsion.runFor(50, true);
+			while(propulsion.isRunning()){
 				propulsion.checkState();
 			}
 			propulsion.stopMoving();
-			
 			
 			paletNotInCamp = getPaletNotInCamp(server.run());
 		}
