@@ -353,7 +353,8 @@ public class MyController {
 	 * 
 	 * 
 	 * 
-	 * moverobot1 a d
+	 * 
+moverobot1 a d
 moverobot1 d g
 getpalet g p3
 movepaletandrobot2 g d p3
@@ -386,13 +387,15 @@ releasepalet c p2
 	
 	private void runIAPDDL() {
 		
+		// TODO lier les palets du PDDL et la position des palets
+		
 		
 		List<String> moveToDo;
 		
 		try {
 			moveToDo = parser.runProblem();
 			
-			
+			/* tant qu'il reste des actions à effectuer */
 			while (!moveToDo.isEmpty()){
 				
 				String [] moveParsed = moveToDo.get(0).split(" ");
@@ -402,7 +405,28 @@ releasepalet c p2
 				}
 				
 				switch(moveParsed[0]) {
-//					case "moverobot:
+					case "moverobot1":
+						if (moveParsed.length != 3) {
+							System.err.println("PDDL probleme mauvais nombre d'arguments moverobot");
+						} else {
+							System.out.println("Le robot se déplace du noeud "+moveParsed[1] + " au noeud "+moveParsed[2]);
+						}						
+						break;
+					case "getpalet":
+						if(moveParsed.length != 3) {
+							System.err.println("PDDL mauvais nombre arguments getpalet");
+						} else {
+							System.out.println("Le robot se déplace jusqu'au noeud "+moveParsed[1]+ " et prend le palet "+moveParsed[2]);
+						}
+						break;
+					case "releasepalet":
+						if(moveParsed.length != 3) {
+							System.err.println("PDDL mauvais nombre arguments releasePalet");
+						} else {
+							System.out.println("Le robot se déplace jusqu'au noeud "+moveParsed[1]+ " (BUT) et lache le palet "+moveParsed[2]);
+						}
+						break;
+					default:
 				}
 				
 			}
