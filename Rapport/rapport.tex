@@ -1,0 +1,85 @@
+% Created 2018-04-06 ven. 10:39
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{TheSpyGeek}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={TheSpyGeek},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\tableofcontents
+
+\section{Planification Automatique - Krobot}
+\label{sec:org6e342d7}
+
+\subsection{Code de controle des moteurs}
+\label{sec:org4705e8b}
+
+   Nous avons réutilisé le code de Lavocat pour le controle des moteurs du robot.
+Nous avons testé leur code pour voir ce qui était fait et on a lu une partie du code pour pouvoir
+l'adapter à notre manière de dirigé le robot. Nous avons surtout étudié le fichier Controller.java
+qui utilise la plupart des méthodes qui nous été necessaire.
+
+\subsection{Définition du domaine et du problème}
+\label{sec:orge1280cd}
+
+Pour le domaine, nous avons défini une liste d'action que le robot peut éffectuer,
+pour se déplacer, pour prendre un palet, pour relacher un palet\ldots{} 
+Cet ensemble d'actions permettent de faire évoluer "l'état" d'un palet 
+pour dans la finalité pour nous que tous les palets disponibles soient 
+dans notre camp. Nous avons aussi créer une liste de prédicats qui 
+traduisent l'état du jeu en cours, du nombre de palets encore disponible, 
+de la position des palet, si le robot tient un palet dans ses pinces, 
+si un palet est dans notre but ou pas.
+
+Dans la définition du problème, nous avons choisi de définir la grille avec 12 noeuds (3 * 4) 
+correspondant aux intersections des lignes de la table sans les intersections dans le but de l'équipe
+adversse. Puis grace aux prédicats, on donne la liste de palet et sur quels noeuds sont les palets.
+Dans le but on défini que tous les palets doivent être dans notre but (camp).
+
+\subsubsection{Schéma du graphe correspondant à nos noeuds}
+\label{sec:org64dc98f}
+\begin{center}
+\includegraphics[width=.9\linewidth]{domain_graph.png}
+\end{center}
+
+\subsection{Fonctionnement du code}
+\label{sec:org365a186}
+
+\subsubsection{Utilisation PDDL4J}
+\label{sec:orge6a3802}
+
+\subsubsection{Controle des moteurs pour se déplacer}
+\label{sec:org1b6b06f}
+
+\subsubsection{Intégration du controle des moteurs et PDDL4J}
+\label{sec:orge344335}
+
+
+
+\subsection{Amélioration possible}
+\label{sec:orgd259dcf}
+
+\begin{itemize}
+\item grace aux équations de droites on pourrait savoir si le robot est allé trop loin si jamais le palet a bougé ou a été pris par un autre robot
+\end{itemize}
+\end{document}
