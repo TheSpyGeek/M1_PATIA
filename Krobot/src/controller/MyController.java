@@ -216,9 +216,6 @@ public class MyController {
 				return;
 			}
 			Collections.sort(tmp);
-	//		System.out.println("Point triées :");
-	//		for(Point p : tmp)
-	//			System.out.println(p);
 			for(int i=0; i<3; i++){
 				Point a = tmp.get(i*3);
 				Point b = tmp.get(i*3+1);
@@ -256,9 +253,6 @@ public class MyController {
 				}
 			}
 		}
-//		System.out.println("Nodes : ");
-//		for(Point node : this.nodesPosition)
-//			System.out.println(node);
 	}
 	
 	private void calibrateRobotPositionAndVector() {
@@ -267,7 +261,6 @@ public class MyController {
 		this.server = new Server();
 		List<Point> tmp = server.run();
 		Collections.sort(tmp);
-//		System.out.println("Sorted palet :");
 		this.robotPosition = tmp.get(0);
 		for (Point p : tmp) {
 			if(top && this.robotPosition.getY() < p.getY()) {
@@ -275,11 +268,7 @@ public class MyController {
 			} else if(!top && this.robotPosition.getY() > p.getY()) {
 				this.robotPosition = p;
 			}
-//			System.out.println(p);
 		}
-			
-		//this.robotPosition = tmp.get(top ? 0 : tmp.size()-1);
-//		System.out.println("RobotPosition : "+this.robotPosition);
 		Point far;
 		Point far1 = nodesPosition.get(2);
 		Point far2 = nodesPosition.get(5);
@@ -289,7 +278,6 @@ public class MyController {
 			far2 = nodesPosition.get(3);
 			far3 = nodesPosition.get(6);
 		}
-//		System.out.println(far1 + " " + far2 + " " + far3);
 		if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far2.getX()-robotPosition.getX())){
 			if (Math.abs(far1.getX()-robotPosition.getX()) < Math.abs(far3.getX()-robotPosition.getX())){
 				far = far1;
@@ -301,9 +289,7 @@ public class MyController {
 		} else {
 			far = far3;
 		}
-//		System.out.println("Far point : "+far );
 		robotVecteur = new Point(far.getX() - this.robotPosition.getX(), far.getY() - this.robotPosition.getY());
-//		System.out.println("VecteurRobot="+robotVecteur);
 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
 	}
 	
@@ -427,7 +413,8 @@ releasepalet c p2
 			
 			//On récupère les actions à effectué !
 //			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
-			Point paletToGet = paletNotInCamp.get(0);
+//			Point paletToGet = paletNotInCamp.get(0);
+			Point paletToGet = getPaletClosestFromRobot(paletNotInCamp);
 //			System.out.println("Palet to get : "+paletToGet);
 			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
@@ -509,6 +496,22 @@ releasepalet c p2
 			
 			paletNotInCamp = getPaletNotInCamp(server.run());
 		}
+	}
+
+	private Point getPaletClosestFromRobot(List<Point> paletNotInCamp) {
+		int delta = 1000;
+		Point tmpClosest = null;
+		int robotX = this.robotPosition.getX();
+		int robotY = this.robotPosition.getY();
+		for(int i=0; i<paletNotInCamp.size(); i++){
+			Point p = paletNotInCamp.get(i);
+			int tmpDelta = Math.abs(robotX - p.getX()) + Math.abs(robotY - p.getY());
+			if (tmpDelta < delta){
+				delta = tmpDelta;
+				tmpClosest = p;
+			}
+		}
+		return tmpClosest;
 	}
 
 	private double angleCalculation(Point paletToGet) {
