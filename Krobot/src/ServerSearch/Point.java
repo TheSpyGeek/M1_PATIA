@@ -1,7 +1,13 @@
 package ServerSearch;
 
-public class Point implements Comparable<Point> {
+import java.io.Serializable;
+
+public class Point implements Serializable, Comparable<Point>{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8140209226476581504L;
 	private int x;
 	private int y;
 	
