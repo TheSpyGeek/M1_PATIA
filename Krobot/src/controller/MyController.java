@@ -45,6 +45,7 @@ public class MyController {
 	protected Point		   robotVecteur	= null;
 	protected EquationLine    lineRobot = null;
 	protected boolean		 top 		= false;
+	protected int oldColor,cptColor;
 	
 	protected ArrayList<Tuple<EquationLine,Integer>> equationsLinesColors;
 	private ArrayList<TImedMotor> motors = new ArrayList<TImedMotor>();
@@ -61,7 +62,8 @@ public class MyController {
 		parser	   = new ParserPDDL4J();
 		nodesPosition = new ArrayList<Point>();
 		equationsLinesColors = new ArrayList<>();
-
+	    oldColor = -1;
+	    cptColor = 0;
 		top = false;
 
 		motors.add(propulsion);
@@ -472,9 +474,19 @@ releasepalet c p2
 					return;
 			}
 			robotVecteur = vRobHome;
+			int currentColor;
 			propulsion.run(true);
-			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){
-				//updatePositionRobotWithLine();
+			while(propulsion.isRunning() && (currentColor = color.getCurrentColor()) != Color.WHITE){
+				
+				if(oldColor == currentColor) {
+					cptColor++;
+				}
+				oldColor = currentColor;
+				if(cptColor >= 1) {
+						updatePositionRobotWithLine(oldColor);
+					    cptColor = 0;
+				}
+						
 				propulsion.checkState();
 				if(input.escapePressed())
 					return;
