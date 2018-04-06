@@ -43,7 +43,7 @@ public class MyController {
 	protected List<Point> nodesPosition = null;
 	protected Point		  robotPosition	= null;
 	protected Point		   robotVecteur	= null;
-	protected EquationLine lineRobot = null;
+	protected EquationLine    lineRobot = null;
 	protected boolean		 top 		= false;
 	
 	protected ArrayList<Tuple<EquationLine,Integer>> equationsLinesColors;
@@ -79,39 +79,12 @@ public class MyController {
 	 */
 	public void start() throws IOException, ClassNotFoundException{
 		loadCalibration();
-		screen.drawText("Calibration", 
-				"Appuyez sur echap ","pour skipper");
-		boolean skip = input.waitOkEscape(Button.ID_ESCAPE);
-		if(skip || calibration()){
-			if (!skip)
-				saveCalibration();
+		calibration();
+		saveCalibration();
 
-			
-			input.waitAny();
-			
-			screen.drawText("Lancer", 
-				"Appuyez sur OK si la","ligne noire est à gauche",
-				"Appuyez sur tout autre", "elle est à droite");
-			calibrateNodePosition();
-			screen.drawText("Lancer", 
-					"Mettre un palet sur","le robot","OK si haut autre", "si bas");
-			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-				this.top = true;
-				calibrateRobotPositionAndVector();
-			}else{
-				this.top = false;
-				calibrateRobotPositionAndVector();
-			}
-			screen.drawText("Lancer", 
-					"Ok pour run");
-			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-				runIA();
-			}
-//			if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
-//				mainLoop(true);
-//			}else{
-//				mainLoop(false);
-//			}
+		screen.drawText("Lancer", "Ok pour run");
+		if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
+			runIA();
 		}
 		cleanUp();
 	}
@@ -125,10 +98,8 @@ public class MyController {
 	 */
 	private boolean calibrateNodeEquationLine() {
 		screen.drawText("Calibration Lignes", 
-		"Appuyez sur echap ","pour skipper");
-		boolean skip = input.waitOkEscape(Button.ID_ESCAPE);
-			
-		if(!skip){
+		"Appuyez sur echap ","pour skipper");			
+		if(!input.waitOkEscape(Button.ID_ESCAPE)){
 			color.lightOn();
 
 			//Calibration equation ligne blanche
@@ -155,7 +126,6 @@ public class MyController {
 			screen.drawText("Placer deux palets","sur la ligne rouge");
 			input.waitAny();
 			addEquationLineFromPalet(Color.RED);
-			
 			return true;
 		}
 		return false;
@@ -235,49 +205,54 @@ public class MyController {
 	}
 		
 	private void calibrateNodePosition() {
-		this.server = new Server();
-		List<Point> tmp = server.run();
-		if (tmp.size() != 9){
-			System.out.println("Error bad number of palet on table");
-			return;
-		}
-		Collections.sort(tmp);
-//		System.out.println("Point triées :");
-//		for(Point p : tmp)
-//			System.out.println(p);
-		for(int i=0; i<3; i++){
-			Point a = tmp.get(i*3);
-			Point b = tmp.get(i*3+1);
-			Point c = tmp.get(i*3+2);
-			if (a.getY() < b.getY() && a.getY() < c.getY()){
-				this.nodesPosition.add(i*3, a);
-				if (b.getY() < c.getY()){
-					this.nodesPosition.add((i*3)+1, b);
-					this.nodesPosition.add((i*3)+2, c);
-				}
-				else{
-					this.nodesPosition.add((i*3)+1, c);
-					this.nodesPosition.add((i*3)+2, b);
-				}
-			} else if (b.getY() < a.getY() && b.getY() <c.getY()){
-				this.nodesPosition.add(i*3, b);
-				if (a.getY() < c.getY()){
-					this.nodesPosition.add((i*3)+1, a);
-					this.nodesPosition.add((i*3)+2, c);
-				}
-				else{
-					this.nodesPosition.add((i*3)+1, c);
-					this.nodesPosition.add((i*3)+2, a);
-				}
-			} else {
-				this.nodesPosition.add(i*3, c);
-				if (a.getY() < b.getY()){
-					this.nodesPosition.add((i*3)+1, a);
-					this.nodesPosition.add((i*3)+2, b);
-				}
-				else{
-					this.nodesPosition.add((i*3)+1, b);
-					this.nodesPosition.add((i*3)+2, a);
+		screen.drawText("Calibration", "Mettre tout les", 
+			"palets sur leur","position",
+			"Echap pour skip");
+		if(!input.waitOkEscape(Button.ID_ESCAPE)){
+			this.server = new Server();
+			List<Point> tmp = server.run();
+			if (tmp.size() != 9){
+				System.out.println("Error bad number of palet on table");
+				return;
+			}
+			Collections.sort(tmp);
+	//		System.out.println("Point triées :");
+	//		for(Point p : tmp)
+	//			System.out.println(p);
+			for(int i=0; i<3; i++){
+				Point a = tmp.get(i*3);
+				Point b = tmp.get(i*3+1);
+				Point c = tmp.get(i*3+2);
+				if (a.getY() < b.getY() && a.getY() < c.getY()){
+					this.nodesPosition.add(i*3, a);
+					if (b.getY() < c.getY()){
+						this.nodesPosition.add((i*3)+1, b);
+						this.nodesPosition.add((i*3)+2, c);
+					}
+					else{
+						this.nodesPosition.add((i*3)+1, c);
+						this.nodesPosition.add((i*3)+2, b);
+					}
+				} else if (b.getY() < a.getY() && b.getY() <c.getY()){
+					this.nodesPosition.add(i*3, b);
+					if (a.getY() < c.getY()){
+						this.nodesPosition.add((i*3)+1, a);
+						this.nodesPosition.add((i*3)+2, c);
+					}
+					else{
+						this.nodesPosition.add((i*3)+1, c);
+						this.nodesPosition.add((i*3)+2, a);
+					}
+				} else {
+					this.nodesPosition.add(i*3, c);
+					if (a.getY() < b.getY()){
+						this.nodesPosition.add((i*3)+1, a);
+						this.nodesPosition.add((i*3)+2, b);
+					}
+					else{
+						this.nodesPosition.add((i*3)+1, b);
+						this.nodesPosition.add((i*3)+2, a);
+					}
 				}
 			}
 		}
@@ -287,6 +262,8 @@ public class MyController {
 	}
 	
 	private void calibrateRobotPositionAndVector() {
+		screen.drawText("Calibration", "Calibration robot", "OK si Top autre", "si bas");
+		this.top = input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER);
 		this.server = new Server();
 		List<Point> tmp = server.run();
 		Collections.sort(tmp);
@@ -660,21 +637,17 @@ releasepalet c p2
 	}
 
 	/**
-	 * Lance les tests du robot, peut être desactivé pour la persy cup
-	 */
-	private void runTests() {
-//		SystemTest.grabberTest(this);
-	}
-
-	/**
 	 * S'occupe d'effectuer l'ensemble des calibrations nécessaires au bon
 	 * fonctionnement du robot.
 	 * 
 	 * @return vrai si tout c'est bien passé.
 	 */
-	private boolean calibration() {
-	
-		return calibrationGrabber() && calibrationCouleur() && calibrateNodeEquationLine();
+	private void calibration() {
+		calibrationGrabber();
+		calibrationCouleur();
+		calibrateNodeEquationLine();
+		calibrateNodePosition();
+		calibrateRobotPositionAndVector();
 	}
 
 	private boolean calibrationGrabber() {
