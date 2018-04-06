@@ -1,0 +1,61 @@
+* Planification Automatique - Krobot
+
+** Code de controle des moteurs
+
+    Nous avons réutilisé le code de Lavocat pour le controle des moteurs du robot.
+Nous avons testé leur code pour voir ce qui était fait et on a lu une partie du code pour pouvoir
+ l'adapter à notre manière de dirigé le robot. Nous avons surtout étudié le fichier Controller.java
+ qui utilise la plupart des méthodes qui nous été necessaire.
+
+** Définition du domaine et du problème 
+
+    Pour le domaine, nous avons défini une liste d'action que le robot peut éffectuer,
+pour se déplacer, pour prendre un palet, pour relacher un palet... 
+Cet ensemble d'actions permettent de faire évoluer "l'état" d'un palet 
+pour dans la finalité pour nous que tous les palets disponibles soient 
+dans notre camp. Nous avons aussi créer une liste de prédicats qui 
+traduisent l'état du jeu en cours, du nombre de palets encore disponible, 
+de la position des palet, si le robot tient un palet dans ses pinces, 
+si un palet est dans notre but ou pas.
+
+    Dans la définition du problème, nous avons choisi de définir la grille avec 12 noeuds (3 * 4) 
+correspondant aux intersections des lignes de la table sans les intersections dans le but de l'équipe
+adversse. Puis grace aux prédicats, on donne la liste de palet et sur quels noeuds sont les palets.
+Dans le but on défini que tous les palets doivent être dans notre but (camp).
+
+*** Schéma du graphe correspondant à nos noeuds
+#+BEGIN_SRC ditaa :file images/domain_graph.png
+
+N1    N2   N3
+ *----*----*
+ |    |    |
+ |    |    |
+ |N4  |N5  |N6
+ *----*----*
+ |    |    |
+ |    |    |
+ |N7  |N8  |N9
+ *----*----*
+ |    |    |
+ |    |    |
+ |    |    |
+ *----*----*
+N10  N11   N12
+
+#+END_SRC
+
+** Fonctionnement du code
+
+*** Utilisation PDDL4J
+
+*** Controle des moteurs pour se déplacer
+
+*** Intégration du controle des moteurs et PDDL4J
+
+
+
+** Amélioration possible
+
+  - grace aux équations de droites on pourrait savoir si le robot est allé trop loin si jamais le palet a bougé ou a été pris par un autre robot
+
+
