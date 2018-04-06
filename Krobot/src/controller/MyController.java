@@ -616,7 +616,8 @@ releasepalet c p2
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
 			color.setCalibration((float[][])ois.readObject());
 			graber.setOpenTime((long)ois.readObject());
-			equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject(); 
+			equationsLinesColors = (ArrayList<Tuple<EquationLine,Integer>>)ois.readObject();
+			nodesPosition = (ArrayList<Point>)ois.readObject();
 			ois.close();
 		}
 	}
@@ -641,6 +642,7 @@ releasepalet c p2
 			str.writeObject(color.getCalibration());
 			str.writeObject(graber.getOpenTime());
 			str.writeObject(equationsLinesColors);
+			str.writeObject(nodesPosition);
 			str.flush();
 			str.close();
 		}
