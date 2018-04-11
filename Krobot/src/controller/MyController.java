@@ -458,7 +458,7 @@ releasepalet c p2
 			robotVecteur = vRobPal;
 			
 			Point toHome = new Point(robotPosition.getX(), top ? 0 : 200);
-			System.out.println("HOME_POSITION : "+toHome);
+//			System.out.println("HOME_POSITION : "+toHome);
 			Point vRobHome = new Point(toHome.getX() - this.robotPosition.getX(), toHome.getY() - this.robotPosition.getY());
 			angleToRotate = angleCalculation(toHome);
 			zproduct = (vRobHome.getX() * robotVecteur.getY()) - (vRobHome.getY() * robotVecteur.getX());
@@ -477,6 +477,7 @@ releasepalet c p2
 			robotVecteur = vRobHome;
 			int currentColor;
 			propulsion.run(true);
+			Point closestToCamp = robotPosition;
 			while(propulsion.isRunning() && (currentColor = color.getCurrentColor()) != Color.WHITE){
 				
 				if(oldColor == currentColor) {
@@ -491,10 +492,14 @@ releasepalet c p2
 				propulsion.checkState();
 				if(input.escapePressed())
 					return;
+				closestToCamp = getClosestToCamp(closestToCamp);
 			}
 			propulsion.stopMoving();
 			updatePositionRobotWithLine(Color.WHITE);
 			System.out.println("TOHOME _ robot position :"+robotPosition);
+			
+			updatePositionWithPaletPosition(Color.WHITE);
+			System.out.println("TOHOME CORRECTIF _ robot position :"+robotPosition);
 			
 			graber.open();
 			propulsion.runFor(50, true);
@@ -504,6 +509,39 @@ releasepalet c p2
 			propulsion.stopMoving();
 			
 			paletNotInCamp = getPaletNotInCamp(server.run());
+		}
+	}
+
+	private Point getClosestToCamp(Point closestToCamp) {
+		List<Point> points = server.run();
+		for(Point p : points){
+			if((top && p.getY() < closestToCamp.getY()) || (!top && p.getY() > closestToCamp.getY())){
+				closestToCamp = p;
+			}
+		}
+		return null;
+	}
+
+	private void updatePositionWithPaletPosition(int color) {
+		int robotX = this.robotPosition.getX();
+		int robotY = this.robotPosition.getY();
+		List<Point> palets = server.run();
+		Point pointClosest = palets.get(0);
+		for(Point tmp : palets){
+			System.out.println("tmpPoint="+tmp);
+			int dist1 = Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY());
+			int dist2 = Math.abs(robotX - tmp.getX()) + Math.abs(robotY - tmp.getY());
+			if(dist2 < dist1){
+				pointClosest = tmp;
+			}
+		}
+		System.out.println("Current RobotPoint = "+robotPosition);
+		System.out.println("Closest Point = "+pointClosest);
+		System.out.println("Delta = "+ Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY()));
+		if(Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY()) < 15){
+			//this.robotPosition = pointClosest;
+			this.robotVecteur = new Point(pointClosest.getX() - this.robotPosition.getX(), pointClosest.getY() - this.robotPosition.getY());
+			updatePositionRobotWithLine(color);
 		}
 	}
 
