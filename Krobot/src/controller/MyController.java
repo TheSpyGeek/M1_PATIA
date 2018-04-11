@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import ServerSearch.Point;
 import ServerSearch.Server;
 import lejos.hardware.Button;
@@ -24,7 +25,6 @@ import sensors.PressionSensor;
 import sensors.VisionSensor;
 import utils.ArrayIndexComparator;
 import utils.EquationLine;
-import utils.R2D2Constants;
 import utils.Tuple;
 import vue.InputHandler;
 import vue.Screen;
@@ -457,7 +457,7 @@ releasepalet c p2
 			
 			robotVecteur = vRobPal;
 			
-			Point toHome = new Point(robotPosition.getX(), top ? robotPosition.getY() - 20 : robotPosition.getY() + 20);
+			Point toHome = new Point(robotPosition.getX(), top ? 0 : 200);
 			System.out.println("HOME_POSITION : "+toHome);
 			Point vRobHome = new Point(toHome.getX() - this.robotPosition.getX(), toHome.getY() - this.robotPosition.getY());
 			angleToRotate = angleCalculation(toHome);
