@@ -43,7 +43,8 @@ public class Propulsion extends TImedMotor implements MoveListener{
 		pilot     = new MovePilot(chassis);
 		pilot.addMoveListener(this);
 		pilot.setLinearAcceleration(R2D2Constants.LINEAR_ACCELERATION);
-		pilot.setAngularSpeed(R2D2Constants.SLOW_SEARCH_SPEED);
+		pilot.setAngularSpeed(5);
+		pilot.setLinearSpeed(60);
 	}
 
 	@Override

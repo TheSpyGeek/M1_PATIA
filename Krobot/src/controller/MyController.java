@@ -431,18 +431,18 @@ public class MyController {
 			oldColor = color.getCurrentColor();
 			cptColor = 0;
 			while(propulsion.isRunning() && !pression.isPressed()){
-				currentColor = color.getCurrentColor();
-				if(oldColor == currentColor) {
-					cptColor++;
-				} else {
-					cptColor = 0;
-				}
-				oldColor = currentColor;
-				if(cptColor >= 3) {
-						updatePositionRobotWithLine(oldColor);
-						robotVecteur = new Point(robotPosition.getX() - oldPosition.getX(), robotPosition.getY() - oldPosition.getY());
-					    cptColor = 0;
-				}
+//				currentColor = color.getCurrentColor();
+//				if(oldColor == currentColor) {
+//					cptColor++;
+//				} else {
+//					cptColor = 0;
+//				}
+//				oldColor = currentColor;
+//				if(cptColor >= 3) {
+//						updatePositionRobotWithLine(oldColor);
+//						robotVecteur = new Point(robotPosition.getX() - oldPosition.getX(), robotPosition.getY() - oldPosition.getY());
+//					    cptColor = 0;
+//				}
 				propulsion.checkState();
 				if(input.escapePressed())
 					return;
@@ -486,17 +486,17 @@ public class MyController {
 			cptColor = color.getCurrentColor();
 			while(propulsion.isRunning() && (currentColor = color.getCurrentColor()) != Color.WHITE){
 				
-				if(oldColor == currentColor) {
-					cptColor++;
-				} else {
-					cptColor = 0;
-				}
-				oldColor = currentColor;
-				if(cptColor >= 3) {
-						updatePositionRobotWithLine(oldColor);
-						robotVecteur = new Point(robotPosition.getX() - oldPosition.getX(), robotPosition.getY() - oldPosition.getY());
-					    cptColor = 0;
-				}
+//				if(oldColor == currentColor) {
+//					cptColor++;
+//				} else {
+//					cptColor = 0;
+//				}
+//				oldColor = currentColor;
+//				if(cptColor >= 3) {
+//						updatePositionRobotWithLine(oldColor);
+//						robotVecteur = new Point(robotPosition.getX() - oldPosition.getX(), robotPosition.getY() - oldPosition.getY());
+//					    cptColor = 0;
+//				}
 						
 				propulsion.checkState();
 				if(input.escapePressed())
@@ -547,8 +547,9 @@ public class MyController {
 		System.out.println("Current RobotPoint = "+robotPosition);
 		System.out.println("Closest Point = "+pointClosest);
 		System.out.println("Delta = "+ Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY()));
-		if(Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY()) < 15){
+		if((Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY())) < 15){
 			//this.robotPosition = pointClosest;
+			System.out.println("Update Position Delta < 15");
 			this.robotVecteur = new Point(pointClosest.getX() - this.robotPosition.getX(), pointClosest.getY() - this.robotPosition.getY());
 			updatePositionRobotWithLine(color);
 		}
