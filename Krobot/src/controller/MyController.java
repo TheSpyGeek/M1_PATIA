@@ -182,7 +182,7 @@ public class MyController {
 		int currentColor = c;
 		if (currentColor == -1)
 			currentColor = color.getCurrentColor();
-		System.out.println("Get la couleur"+currentColor);
+
 		switch (currentColor) {
 			// Le robot a croisé une des lignes 
             case Color.WHITE:
@@ -257,7 +257,7 @@ public class MyController {
 			this.server = new Server();
 			List<Point> tmp = server.run();
 			if (tmp.size() != 9){
-				System.out.println("Error bad number of palet on table");
+				System.err.println("Error bad number of palet on table");
 				return;
 			}
 			Collections.sort(tmp);
