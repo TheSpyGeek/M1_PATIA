@@ -114,8 +114,8 @@ public class MyController {
 			input.waitAny();
 			addEquationLineFromPalet(Color.WHITE);
 			
-			//calibration equation ligne noir 
-	/*		screen.drawText("Placer deux palets","sur la ligne noir","parallèle à","l'axe des ordonnées");
+			/*//calibration equation ligne noir
+			screen.drawText("Placer deux palets","sur la ligne noir","parallèle à","l'axe des ordonnées");
 			input.waitAny();
 			addEquationLineFromPalet(Color.BLACK);
 			
@@ -128,6 +128,21 @@ public class MyController {
 			screen.drawText("Placer deux palets","sur la ligne rouge");
 			input.waitAny();
 			addEquationLineFromPalet(Color.RED);
+
+			//calibration equation ligne bleue
+			screen.drawText("Placer deux palets","sur la ligne bleue");
+			input.waitAny();
+			addEquationLineFromPalet(Color.BLUE);
+
+			//calibration equation ligne jaune
+			screen.drawText("Placer deux palets","sur la ligne jaune");
+			input.waitAny();
+			addEquationLineFromPalet(Color.YELLOW);
+
+			//calibration equation ligne vert
+			screen.drawText("Placer deux palets","sur la ligne jaune");
+			input.waitAny();
+			addEquationLineFromPalet(Color.GREEN);
 			return true;
 		}
 		return false;
@@ -198,6 +213,34 @@ public class MyController {
                 if(equationsLinesColors.get(2).y == Color.RED) {
                 	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
                 	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(2).x);
+                	System.out.println(robotPosition.getX()+" "+robotPosition.getY());
+                }
+            	break;
+                        // Le robot à croisé la ligne rouge
+            case Color.BLUE:
+            	System.out.print("Ligne bleue: ");
+
+                if(equationsLinesColors.get(3).y == Color.RED) {
+                	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
+                	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(3).x);
+                	System.out.println(robotPosition.getX()+" "+robotPosition.getY());
+                }
+            	break;
+			case Color.YELLOW:
+            	System.out.print("Ligne jaune: ");
+
+                if(equationsLinesColors.get(4).y == Color.RED) {
+                	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
+                	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(4).x);
+                	System.out.println(robotPosition.getX()+" "+robotPosition.getY());
+                }
+            	break;
+			case Color.GREEN:
+            	System.out.print("Ligne verte: ");
+
+                if(equationsLinesColors.get(5).y == Color.RED) {
+                	lineRobot = new EquationLine(robotPosition,robotVecteur,true);
+                	robotPosition = lineRobot.IntersectionWithEquation(equationsLinesColors.get(5).x);
                 	System.out.println(robotPosition.getX()+" "+robotPosition.getY());
                 }
             	break;
@@ -294,62 +337,7 @@ public class MyController {
 		robotVecteur = new Point(far.getX() - this.robotPosition.getX(), far.getY() - this.robotPosition.getY());
 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
 	}
-	
-//	public static double angleBetweenPoints(Point a, Point b) {
-//        double angleA = angleFromOriginCounterClockwise(a);
-//        double angleB = angleFromOriginCounterClockwise(b);
-//        return Math.abs(angleA-angleB);
-//    }
-//
-//    public static double angleFromOriginCounterClockwise(Point a) {
-//        double degrees = Math.toDegrees(Math.atan(a.getY()/a.getX()));
-//        if(a.getX() < 0.0) return degrees+180.0;
-//        else if(a.getY() < 0.0) return degrees+360.0;
-//        else return degrees;
-//    }
-//
-//    public static void main(String[] args) {
-//        Point p1 = new Point(1, 100);
-//        Point p2 = new Point(-100, 1);
-//        System.out.println(angleBetweenPoints(p1, p2));
-//    }
-	
-	/* moves 
-	 * 
-	 * 
-	 * 
-	 * 
-moverobot1 a d
-moverobot1 d g
-getpalet g p3
-movepaletandrobot2 g d p3
-movepaletandrobot2 d a p3
-releasepalet a p3
-moverobot1 a d
-getpalet d p0
-movepaletandrobot1 d e p0
-movepaletandrobot2 e b p0
-releasepalet b p0
-moverobot1 b e
-moverobot1 e h
-getpalet h p4
-movepaletandrobot2 h e p4
-movepaletandrobot2 e b p4
-releasepalet b p4
-moverobot1 b e
-getpalet e p1
-movepaletandrobot2 e b p1
-releasepalet b p1
-moverobot1 b c
-moverobot1 c f
-getpalet f p2
-movepaletandrobot2 f c p2
-releasepalet c p2
 
-	 * 
-	 * 
-	 * */
-	
 	private void runIAPDDL() {
 		
 		// TODO lier les palets du PDDL et la position des palets
@@ -519,7 +507,7 @@ releasepalet c p2
 				closestToCamp = p;
 			}
 		}
-		return null;
+		return closestToCamp;
 	}
 
 	private void updatePositionWithPaletPosition(int color) {
