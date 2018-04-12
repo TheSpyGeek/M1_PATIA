@@ -415,7 +415,9 @@ public class MyController {
 //			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
 			angleToRotate = Math.abs(angleToRotate);
 //			System.out.println("Turn Left = "+turnLeft);
-			
+			int currentColor;
+			Point oldPosition = robotPosition;
+
 			propulsion.rotate((float)angleToRotate, turnLeft, false);
 			if(graber.isClose())
 				graber.open();
@@ -426,7 +428,21 @@ public class MyController {
 					return;
 			}
 			propulsion.run(true);
+			oldColor = color.getCurrentColor();
+			cptColor = 0;
 			while(propulsion.isRunning() && !pression.isPressed()){
+				currentColor = color.getCurrentColor();
+				if(oldColor == currentColor) {
+					cptColor++;
+				} else {
+					cptColor = 0;
+				}
+				oldColor = currentColor;
+				if(cptColor >= 3) {
+						updatePositionRobotWithLine(oldColor);
+						robotVecteur = new Point(robotPosition.getX() - oldPosition.getX(), robotPosition.getY() - oldPosition.getY());
+					    cptColor = 0;
+				}
 				propulsion.checkState();
 				if(input.escapePressed())
 					return;
@@ -463,17 +479,22 @@ public class MyController {
 					return;
 			}
 			robotVecteur = vRobHome;
-			int currentColor;
 			propulsion.run(true);
 			Point closestToCamp = robotPosition;
+			oldPosition = robotPosition;
+			oldColor = color.getCurrentColor();
+			cptColor = color.getCurrentColor();
 			while(propulsion.isRunning() && (currentColor = color.getCurrentColor()) != Color.WHITE){
 				
 				if(oldColor == currentColor) {
 					cptColor++;
+				} else {
+					cptColor = 0;
 				}
 				oldColor = currentColor;
-				if(cptColor >= 1) {
+				if(cptColor >= 3) {
 						updatePositionRobotWithLine(oldColor);
+						robotVecteur = new Point(robotPosition.getX() - oldPosition.getX(), robotPosition.getY() - oldPosition.getY());
 					    cptColor = 0;
 				}
 						
