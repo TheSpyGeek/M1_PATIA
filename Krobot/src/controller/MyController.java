@@ -158,7 +158,7 @@ public class MyController {
 		this.server = new Server();
 		List<Point> listPalets = server.run();
 		if(listPalets.size() !=2) {
-			System.out.println("Error bad number of palet on table");
+			System.out.println("Error bad number of palet on table ("+listPalets.size()+")");
 			return;
 		}
 		
@@ -167,7 +167,7 @@ public class MyController {
 		Point p2 = listPalets.get(1);
 		EquationLine equation = new EquationLine(p1,p2);
 		equationsLinesColors.add(new Tuple<>(equation,new Integer(color)));
-		//equation.printEquationParameters();
+
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class MyController {
 			this.server = new Server();
 			List<Point> tmp = server.run();
 			if (tmp.size() != 9){
-				System.err.println("Error bad number of palet on table");
+				System.out.println("Error bad number of palet on table ("+tmp.size()+")");
 				return;
 			}
 			Collections.sort(tmp);
