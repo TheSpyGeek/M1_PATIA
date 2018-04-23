@@ -426,16 +426,12 @@ public class MyController {
 //			Point paletToGet = nodesPosition.get(nodesWithPalet.get(0));
 //			Point paletToGet = paletNotInCamp.get(0);
 			Point paletToGet = getPaletClosestFromRobot(paletNotInCamp);
-			System.out.println("Palet to Get :"+paletToGet);
-//			System.out.println("Palet to get : "+paletToGet);
 			Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 			double angleToRotate = angleCalculation(paletToGet);
 			double zproduct = (vRobPal.getX() * robotVecteur.getY()) - (vRobPal.getY() * robotVecteur.getX());
 			double dotProd = (vRobPal.getX() * robotVecteur.getX()) + (vRobPal.getY() * robotVecteur.getY());
 			boolean turnLeft = (zproduct * dotProd) < 0;
-//			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
 			angleToRotate = Math.abs(angleToRotate);
-//			System.out.println("Turn Left = "+turnLeft);
 
 			propulsion.rotate((float)angleToRotate, turnLeft, false);
 			if(graber.isClose())
@@ -450,18 +446,6 @@ public class MyController {
 			oldColor = color.getCurrentColor();
 			cptColor = 0;
 			while(propulsion.isRunning() && !pression.isPressed()){
-//				currentColor = color.getCurrentColor();
-//				if(oldColor == currentColor) {
-//					cptColor++;
-//				} else {
-//					cptColor = 0;
-//				}
-//				oldColor = currentColor;
-//				if(cptColor >= 3) {
-//						updatePositionRobotWithLine(oldColor);
-//						robotVecteur = new Point(robotPosition.getX() - oldPosition.getX(), robotPosition.getY() - oldPosition.getY());
-//					    cptColor = 0;
-//				}
 				propulsion.checkState();
 				if(input.escapePressed())
 					return;
@@ -476,20 +460,16 @@ public class MyController {
 			double normeRobPal = Math.sqrt(Math.pow(vRobPal.getX(), 2) + Math.pow(vRobPal.getY(), 2));
 			Tuple<Double,Double> vectorTmp = new Tuple<Double,Double>((-vRobPal.getX()/normeRobPal), (-vRobPal.getY()/normeRobPal));
 			robotPosition = new Point((int)((10*vectorTmp.x) + paletToGet.getX()), (int)((10*vectorTmp.y) + paletToGet.getY()));
-			System.out.println("GETPALET _ Robot Position="+robotPosition);
 			
 			robotVecteur = vRobPal;
 			
 			Point toHome = new Point(robotPosition.getX(), top ? 0 : 200);
-//			System.out.println("HOME_POSITION : "+toHome);
 			Point vRobHome = new Point(toHome.getX() - this.robotPosition.getX(), toHome.getY() - this.robotPosition.getY());
 			angleToRotate = angleCalculation(toHome);
 			zproduct = (vRobHome.getX() * robotVecteur.getY()) - (vRobHome.getY() * robotVecteur.getX());
 			dotProd = (vRobHome.getX() * robotVecteur.getX()) + (vRobHome.getY() * robotVecteur.getY());
 			turnLeft = (zproduct * dotProd) < 0;
-//			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
 			angleToRotate = Math.abs(angleToRotate);
-//			System.out.println("Turn Left = "+turnLeft);
 			
 			propulsion.rotate((float)angleToRotate, turnLeft, false);
 			while(propulsion.isRunning()){
@@ -500,25 +480,10 @@ public class MyController {
 			robotVecteur = vRobHome;
 			propulsion.run(true);
 			Point closestToCamp = robotPosition;
-			int currentColor;
-			Point oldPosition = robotPosition;
-			oldPosition = robotPosition;
+
 			oldColor = color.getCurrentColor();
 			cptColor = color.getCurrentColor();
-			while(propulsion.isRunning() && (currentColor = color.getCurrentColor()) != Color.WHITE){
-				
-//				if(oldColor == currentColor) {
-//					cptColor++;
-//				} else {
-//					cptColor = 0;
-//				}
-//				oldColor = currentColor;
-//				if(cptColor >= 3) {
-//						updatePositionRobotWithLine(oldColor);
-//						robotVecteur = new Point(robotPosition.getX() - oldPosition.getX(), robotPosition.getY() - oldPosition.getY());
-//					    cptColor = 0;
-//				}
-						
+			while(propulsion.isRunning() && color.getCurrentColor() != Color.WHITE){	
 				propulsion.checkState();
 				if(input.escapePressed())
 					return;
@@ -571,19 +536,13 @@ public class MyController {
 		List<Point> palets = server.run();
 		Point pointClosest = palets.get(0);
 		for(Point tmp : palets){
-			System.out.println("tmpPoint="+tmp);
 			int dist1 = Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY());
 			int dist2 = Math.abs(robotX - tmp.getX()) + Math.abs(robotY - tmp.getY());
 			if(dist2 < dist1){
 				pointClosest = tmp;
 			}
 		}
-		System.out.println("Current RobotPoint = "+robotPosition);
-		System.out.println("Closest Point = "+pointClosest);
-		System.out.println("Delta = "+ Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY()));
 		if((Math.abs(robotX - pointClosest.getX()) + Math.abs(robotY - pointClosest.getY())) < 15){
-			//this.robotPosition = pointClosest;
-			System.out.println("Update Position Delta < 15");
 			this.robotVecteur = new Point(pointClosest.getX() - this.robotPosition.getX(), pointClosest.getY() - this.robotPosition.getY());
 			updatePositionRobotWithLine(color);
 		}
@@ -636,9 +595,6 @@ public class MyController {
 		for(Point palet : paletsPositions){
 			if (!paletIsInCamp(palet)){
 				paletNotInCamp.add(palet);
-				System.out.println("Palet NOT In camp :"+palet);
-			} else {
-				System.out.println("Palet In camp :"+palet);
 			}
 		}
 		return paletNotInCamp;
@@ -684,6 +640,7 @@ public class MyController {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
+	@SuppressWarnings("unchecked")
 	private void loadCalibration() throws FileNotFoundException, IOException, ClassNotFoundException {
 		File file = new File("calibration");
 		if(file.exists()){
