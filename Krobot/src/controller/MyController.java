@@ -80,10 +80,11 @@ public class MyController {
 	 * @throws ClassNotFoundException 
 	 */
 	public void start() throws IOException, ClassNotFoundException{
+		cleanUp();
 		loadCalibration();
 		calibration();
 		saveCalibration();
-
+		cleanUp();
 		screen.drawText("Lancer", "Ok pour run");
 		if(input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER)){
 			runIA();
@@ -248,7 +249,14 @@ public class MyController {
             	break;
         }	
 	}
-		
+	
+	/**
+	 * Avant de lancer cette calibration veuillez mettre un palet sur les 9 intersections principales
+	 * 
+	 * Permet de calibrer les positions des 9 intersections principales
+	 * On récupère la position des tout les palets  puis on trie les points 2D 
+	 * afin de les ranger dans l'ordre.
+	 */
 	private void calibrateNodePosition() {
 		screen.drawText("Calibration", "Mettre tout les", 
 			"palets sur leur","position",
@@ -300,6 +308,12 @@ public class MyController {
 		}
 	}
 	
+	/**
+	 * Avant de lancer cette calibration veuillez mettre un palet sur le robot
+	 * 
+	 * Permet d'initialiser la position du robot ainsi que sa direction :
+	 * On récupère le palet le plus loin sur sa ligne et on détermine ainsi son vecteur
+	 */
 	private void calibrateRobotPositionAndVector() {
 		screen.drawText("Calibration", "Calibration robot", "OK si Top autre", "si bas");
 		this.top = input.isThisButtonPressed(input.waitAny(), Button.ID_ENTER);
@@ -338,11 +352,10 @@ public class MyController {
 		lineRobot = new EquationLine(robotPosition,robotVecteur,true);
 	}
 
+	/**
+	 * 
+	 */
 	private void runIAPDDL() {
-		
-		// TODO lier les palets du PDDL et la position des palets
-		
-		
 		List<String> moveToDo;
 		
 		try {
@@ -393,6 +406,14 @@ public class MyController {
 		
 	}
 
+	/**
+	 * Boucle principale du robot :
+	 * 
+	 * Choix d'un palet
+	 * Recupération d'un palet
+	 * Retour à la base
+	 * 
+	 */
 	private void runIA() {
 //		List<Integer> nodesWithPalet = getNodesWithPalet(server.run());
 		List<Point> paletNotInCamp = getPaletNotInCamp(server.run());
@@ -415,8 +436,6 @@ public class MyController {
 //			System.out.println("zprod = "+zproduct + " dotProd = "+dotProd + " turnLeft = "+turnLeft);
 			angleToRotate = Math.abs(angleToRotate);
 //			System.out.println("Turn Left = "+turnLeft);
-			int currentColor;
-			Point oldPosition = robotPosition;
 
 			propulsion.rotate((float)angleToRotate, turnLeft, false);
 			if(graber.isClose())
@@ -481,6 +500,8 @@ public class MyController {
 			robotVecteur = vRobHome;
 			propulsion.run(true);
 			Point closestToCamp = robotPosition;
+			int currentColor;
+			Point oldPosition = robotPosition;
 			oldPosition = robotPosition;
 			oldColor = color.getCurrentColor();
 			cptColor = color.getCurrentColor();
@@ -521,6 +542,11 @@ public class MyController {
 		}
 	}
 
+	/**
+	 * 
+	 * @param closestToCamp Dernier point détecter le plus proche du camp
+	 * @return le point le plus proche (détecté par la caméra) de notre camp sans y être
+	 */
 	private Point getClosestToCamp(Point closestToCamp) {
 		List<Point> points = server.run();
 		for(Point p : points){
@@ -531,6 +557,14 @@ public class MyController {
 		return closestToCamp;
 	}
 
+	/**
+	 * Cette methode n'est a appele que lorsque le robot a un palet dans ses pinces
+	 * 
+	 * Recherche le palet le plus proche du robot
+	 * Si le palet est assez proche on considère que c'est celui dans ses pinces
+	 * Ainsi on update la position du robot avec la position du palet
+	 * @param color
+	 */
 	private void updatePositionWithPaletPosition(int color) {
 		int robotX = this.robotPosition.getX();
 		int robotY = this.robotPosition.getY();
@@ -555,6 +589,11 @@ public class MyController {
 		}
 	}
 
+	/**
+	 * 
+	 * @param paletNotInCamp Liste des palets en jeu
+	 * @return La position du palet le plus proche du robot
+	 */
 	private Point getPaletClosestFromRobot(List<Point> paletNotInCamp) {
 		int delta = 1000;
 		Point tmpClosest = null;
@@ -571,8 +610,12 @@ public class MyController {
 		return tmpClosest;
 	}
 
+	/**
+	 * 
+	 * @param paletToGet Position du palet a recupere
+	 * @return nombre de degree a tourner pour s'oriente vers le palet
+	 */
 	private double angleCalculation(Point paletToGet) {
-//		System.out.println("PaletToGet" + paletToGet);
 		Point vRobPal = new Point(paletToGet.getX() - this.robotPosition.getX(), paletToGet.getY() - this.robotPosition.getY());
 		double normRabPal = Math.sqrt(Math.pow(vRobPal.getX(), 2) + Math.pow(vRobPal.getY(), 2));
 		double normRobVec = Math.sqrt(Math.pow(robotVecteur.getX(), 2) + Math.pow(robotVecteur.getY(), 2));
@@ -580,26 +623,14 @@ public class MyController {
 		if ((robotVecteur.getX()*-vRobPal.getY()) - robotVecteur.getY()*vRobPal.getX() < 0){
 			degree = - degree;
 		}
-//		System.out.println("Degree to turn = "+degree);
 		return degree;
 	}
-	
-	private char getNodeWithRobot() {
-		int robotX = this.robotPosition.getX();
-		int robotY = this.robotPosition.getY();
-		int delta = 1000;
-		int index = -1;
-		for(int i=0; i<this.nodesPosition.size(); i++){
-			Point p = this.nodesPosition.get(i);
-			int tmpDelta = Math.abs(robotX - p.getX()) + Math.abs(robotY - p.getY());
-			if (tmpDelta < delta){
-				tmpDelta = delta;
-				index = i;
-			}
-		}
-		return (char) (index+65);
-	}
 
+	/**
+	 * 
+	 * @param paletsPositions Liste des positions des palets sur la table
+	 * @return Liste des positions des palets encore en jeu
+	 */
 	private List<Point> getPaletNotInCamp(List<Point> paletsPositions) {
 		List<Point> paletNotInCamp = new ArrayList<Point>();
 		for(Point palet : paletsPositions){
@@ -613,35 +644,21 @@ public class MyController {
 		return paletNotInCamp;
 	}
 	
-//	private List<Integer> getNodesWithPalet(List<Point> paletsPosition) {
-//		List<Integer> nodesWithPalet = new ArrayList<Integer>();
-//		for(Point palet : paletsPosition){
-//			int paletX = palet.getX();
-//			int paletY = palet.getY();
-//			int delta = 1000;
-//			int index = -1;
-//			if (!paletIsInCamp(palet)){
-//				System.out.println("Palet NOT In camp :"+palet);
-//				for(int i=0; i<this.nodesPosition.size(); i++){
-//					Point p = this.nodesPosition.get(i);
-//					int tmpDelta = Math.abs(paletX - p.getX()) + Math.abs(paletY - p.getY());
-//					if (tmpDelta < delta){
-//						tmpDelta = delta;
-//						index = i;
-//					}
-//				}
-//				nodesWithPalet.add(index);
-//			} else {
-//				System.out.println("Palet In camp :"+palet);
-//			}
-//		}
-//		return nodesWithPalet;
-//	}
-	
+	/**
+	 * 
+	 * @param palet Position du palet à verifie
+	 * @return Vrai si le palet est dans un camp
+	 */
 	private boolean paletIsInCamp(Point palet) {
 		return equationsLinesColors.get(0).y == Color.WHITE && equationsLinesColors.get(1).y == Color.WHITE && (!equationsLinesColors.get(0).x.pointIsAbove(palet) || equationsLinesColors.get(1).x.pointIsAbove(palet));
 	}
 
+	/**
+	 * 
+	 * @param nodesWithPalet Liste des noeud ayant un palet
+	 * @param nbNodes Nombre de noeud voulu
+	 * @return Liste de nbNodes noeud les plus proche du robot
+	 */
 	private List<Integer> getNodesWithPaletCloseFromRobot(List<Integer> nodesWithPalet, int nbNodes) {
 		List<Integer> nodesWithPaletCloseFromRobot = new ArrayList<Integer>();
 		Integer[] deltaForClosestNodes = new Integer[nodesWithPalet.size()];
@@ -818,32 +835,3 @@ public class MyController {
 		return false;
 	}
 }
-//////////////////////////// CODE MORT ////////////////////////////////////////////////
-
-//	public static double angleBetweenPoints(Point a, Point b) {
-//        double angleA = angleFromOriginCounterClockwise(a);
-//        double angleB = angleFromOriginCounterClockwise(b);
-//        return Math.abs(angleA-angleB);
-//    }
-//
-//    public static double angleFromOriginCounterClockwise(Point a) {
-//        double degrees = Math.toDegrees(Math.atan(a.getY()/a.getX()));
-//        if(a.getX() < 0.0) return degrees+180.0;
-//        else if(a.getY() < 0.0) return degrees+360.0;
-//        else return degrees;
-//    }
-//
-//    public static void main(String[] args) {
-//        Point p1 = new Point(1, 100);
-//        Point p2 = new Point(-100, 1);
-//        System.out.println(angleBetweenPoints(p1, p2));
-//    }
-
-
-
-//	private double angleCalculation(Point paletToGet) {
-//		Point northPoint = new Point(this.robotPosition.getX(), paletToGet.getY());
-//		double disRobotToNorth = Math.sqrt(Math.pow((northPoint.getX() - this.robotPosition.getX()), 2) + Math.pow((northPoint.getY() - this.robotPosition.getY()), 2));
-//		double disRobotToPalet = Math.sqrt(Math.pow((paletToGet.getX() - this.robotPosition.getX()), 2) + Math.pow((paletToGet.getY() - this.robotPosition.getY()), 2));
-//		return Math.toDegrees(Math.acos((disRobotToNorth/disRobotToPalet)));
-//	}
